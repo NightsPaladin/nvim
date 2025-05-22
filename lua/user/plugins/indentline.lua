@@ -1,5 +1,5 @@
 return {
-  "NMAC427/guess-indent.nvim", -- Detect tabstop and shiftwidth automatically
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`

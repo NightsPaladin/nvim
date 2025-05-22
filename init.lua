@@ -1,51 +1,37 @@
-require 'user.launch'
-require 'user.options'
-require 'user.keymaps'
-require 'user.autocommands'
-spec 'user.colorscheme'
-spec 'user.plugins.bufferline'
-spec 'user.plugins.breadcrumbs'
-spec 'user.plugins.cmp'
-spec 'user.plugins.colorizer'
-spec 'user.plugins.conform'
-spec 'user.plugins.gitsigns'
-spec 'user.plugins.guessindent'
-spec 'user.plugins.lazydev'
-spec 'user.plugins.lsp'
-spec 'user.plugins.lualine'
-spec 'user.plugins.mini'
-spec 'user.plugins.navic'
-spec 'user.plugins.nvimsurround'
-spec 'user.plugins.nvimtree'
-spec 'user.plugins.telescope'
-spec 'user.plugins.telekasten'
-spec 'user.plugins.todocomments'
-spec 'user.plugins.toggleterm'
-spec 'user.plugins.treesitter'
-spec 'user.plugins.whichkey'
-require 'user.lazy'
+require("user.launch")
+require("user.options")
+require("user.keymaps")
+require("user.autocommands")
+spec("user.colorscheme")
 
--- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
--- init.lua. If you want these files, they are in the repository, so you can just download them and
--- place them in the correct locations.
+-- Plugin to provide "tabs" at the top, showing all open buffers/tabs.
+-- I don't need this as telescope and Shift+H/L can move between files.
+-- I think it's primarily for a VS Code-like experience.
+-- spec("user.plugins.bufferline")
 
--- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
---
---  Here are some example plugins that I've included in the Kickstart repository.
---  Uncomment any of the lines below to enable them (you will need to restart nvim).
---
--- require 'kickstart.plugins.debug',
--- require 'kickstart.plugins.indent_line',
--- require 'kickstart.plugins.lint',
--- require 'kickstart.plugins.autopairs',
--- require 'kickstart.plugins.neo-tree',
--- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+spec("user.plugins.breadcrumbs")
+spec("user.plugins.cmp")
+spec("user.plugins.colorizer")
+spec("user.plugins.conform")
+spec("user.plugins.gitsigns")
+spec("user.plugins.guessindent")
+spec("user.plugins.indentline")
+spec("user.plugins.lazydev")
+spec("user.plugins.lsp")
+spec("user.plugins.lualine")
+spec("user.plugins.mini")
+spec("user.plugins.navic")
+spec("user.plugins.nvimsurround")
+spec("user.plugins.nvimtree")
+spec("user.plugins.schemastore") -- Keep? Messes with various filetype formatting schemas like JSON, YAML, LUA.
+spec("user.plugins.telescope")
+spec("user.plugins.telekasten")
+spec("user.plugins.todocomments")
+spec("user.plugins.toggleterm")
+spec("user.plugins.treesitter")
+spec("user.plugins.whichkey")
+require("user.lazy")
 
--- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
---    This is the easiest way to modularize your config.
---
---  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
--- { import = 'custom.plugins' },
 --
 -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
 -- Or use telescope!

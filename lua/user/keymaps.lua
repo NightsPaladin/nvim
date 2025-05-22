@@ -7,14 +7,20 @@ local opts = { noremap = true, silent = true }
 -- write buffer to file
 keymap("n", "<leader>w", "<cmd>w!<CR>", { desc = "Save" })
 -- quit window
-keymap("n", "<leader>qq", "<cmd>confirm q<CR>", { desc = "Quit" })
+keymap("n", "<leader>q", "<cmd>confirm q<CR>", { desc = "Quit" })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostic keymaps
-keymap("n", "<leader>qf", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+keymap("n", "<leader>cq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+keymap("n", "<leader>cj", function()
+  vim.diagnostic.jump({ count = 1, float = true })
+end, { desc = "Goto Next Diagnostic" })
+keymap("n", "<leader>ck", function()
+  vim.diagnostic.jump({ count = -1, float = true })
+end, { desc = "Goto Next Diagnostic" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -103,12 +109,15 @@ keymap("x", "p", '"_dP', opts)
 keymap("t", "<C-;>", "<C-\\><C-n>", opts)
 
 -- Toggle line/relative numbers
-keymap("n", "<leader>0r", function()
+keymap("n", "<leader>tr", function()
   vim.o.relativenumber = not vim.o.relativenumber
-end, { desc = "Toggle Relative Line Numbers" })
-keymap("n", "<leader>0n", function()
+end, { desc = "[T]oggle [R]elative Line Numbers" })
+keymap("n", "<leader>tn", function()
   vim.o.number = not vim.o.number
-end, { desc = "Toggle Line Numbers" })
+end, { desc = "[T]oggle Line [N]umbers" })
+
+-- Toggle markview plugin
+keymap("n", "<leader>tm", "<cmd>:Markview<CR>", { desc = "[T]oggle [M]arkview" })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

@@ -1,15 +1,15 @@
 return { -- Autoformat
-  'stevearc/conform.nvim',
-  event = { 'BufWritePre' },
-  cmd = { 'ConformInfo' },
+  "stevearc/conform.nvim",
+  event = { "BufWritePre" },
+  cmd = { "ConformInfo" },
   keys = {
     {
-      '<leader>lf',
+      "<leader>cf",
       function()
-        require('conform').format { async = true, lsp_format = 'fallback' }
+        require("conform").format({ async = true, lsp_format = "fallback" })
       end,
-      mode = '',
-      desc = '[F]ormat buffer',
+      mode = "",
+      desc = "[F]ormat buffer",
     },
   },
   opts = {
@@ -24,12 +24,12 @@ return { -- Autoformat
       else
         return {
           timeout_ms = 500,
-          lsp_format = 'fallback',
+          lsp_format = "fallback",
         }
       end
     end,
     formatters_by_ft = {
-      lua = { 'stylua' },
+      lua = { "stylua" },
       -- Conform can also run multiple formatters sequentially
       -- python = { "isort", "black" },
       --
@@ -38,3 +38,6 @@ return { -- Autoformat
     },
   },
 }
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et

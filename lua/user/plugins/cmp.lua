@@ -1,35 +1,35 @@
 return { -- Autocompletion
-  'saghen/blink.cmp',
-  event = 'VimEnter',
-  version = '1.*',
+  "saghen/blink.cmp",
+  event = "VimEnter",
+  version = "1.*",
   dependencies = {
     -- Snippet Engine
     {
-      'L3MON4D3/LuaSnip',
-      version = '2.*',
+      "L3MON4D3/LuaSnip",
+      version = "2.*",
       build = (function()
         -- Build Step is needed for regex support in snippets.
         -- This step is not supported in many windows environments.
         -- Remove the below condition to re-enable on windows.
-        if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+        if vim.fn.has("win32") == 1 or vim.fn.executable("make") == 0 then
           return
         end
-        return 'make install_jsregexp'
+        return "make install_jsregexp"
       end)(),
       dependencies = {
         -- `friendly-snippets` contains a variety of premade snippets.
         --    See the README about individual language/framework/plugin snippets:
         --    https://github.com/rafamadriz/friendly-snippets
         {
-          'rafamadriz/friendly-snippets',
+          "rafamadriz/friendly-snippets",
           config = function()
-            require('luasnip.loaders.from_vscode').lazy_load()
+            require("luasnip.loaders.from_vscode").lazy_load()
           end,
         },
       },
       opts = {},
     },
-    'folke/lazydev.nvim',
+    "folke/lazydev.nvim",
   },
   --- @module 'blink.cmp'
   --- @type blink.cmp.Config
@@ -56,11 +56,11 @@ return { -- Autocompletion
       -- <c-k>: Toggle signature help
       --
       -- See :h blink-cmp-config-keymap for defining your own keymap
-      preset = 'default',
+      preset = "default",
 
-      ['<C-k>'] = { 'select_prev', 'fallback' },
-      ['<C-j>'] = { 'select_next', 'fallback' },
-      ['<Tab>'] = { 'accept', 'fallback' },
+      ["<C-k>"] = { "select_prev", "fallback" },
+      ["<C-j>"] = { "select_next", "fallback" },
+      ["<Tab>"] = { "accept", "fallback" },
 
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -69,7 +69,7 @@ return { -- Autocompletion
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned
-      nerd_font_variant = 'mono',
+      nerd_font_variant = "mono",
     },
 
     completion = {
@@ -79,13 +79,13 @@ return { -- Autocompletion
     },
 
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'lazydev' },
+      default = { "lsp", "path", "snippets", "lazydev" },
       providers = {
-        lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+        lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
       },
     },
 
-    snippets = { preset = 'luasnip' },
+    snippets = { preset = "luasnip" },
 
     -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
     -- which automatically downloads a prebuilt binary when enabled.
@@ -94,9 +94,12 @@ return { -- Autocompletion
     -- the rust implementation via `'prefer_rust_with_warning'`
     --
     -- See :h blink-cmp-config-fuzzy for more information
-    fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = "lua" },
 
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
   },
 }
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et

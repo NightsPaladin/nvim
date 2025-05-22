@@ -1,6 +1,8 @@
 return { -- Highlight, edit, and navigate code
   "nvim-treesitter/nvim-treesitter",
-  dependencies = { "OXY2DEV/markview.nvim" },
+  dependencies = {
+    "OXY2DEV/markview.nvim",
+  },
   build = ":TSUpdate",
   main = "nvim-treesitter.configs", -- Sets main module to use for opts
   -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -25,3 +27,6 @@ return { -- Highlight, edit, and navigate code
   --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
   --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 }
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et

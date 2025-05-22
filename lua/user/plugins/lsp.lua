@@ -58,6 +58,9 @@ return {
           vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
         end
 
+        -- Set vim lsp log to "off" normally and turn it up when needed for debugging
+        vim.lsp.set_log_level("off")
+
         -- Rename the variable under your cursor.
         --  Most Language Servers support renaming across files, etc.
         map("grn", vim.lsp.buf.rename, "[R]e[n]ame")
@@ -99,6 +102,9 @@ return {
         map("gl", function()
           vim.diagnostic.open_float({ bufnr = event.buf, scope = "line", focus = false })
         end, "Show Line Diagnostics")
+
+        -- Show LspInfo
+        map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
 
         -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
         ---@param client vim.lsp.Client
@@ -248,6 +254,20 @@ return {
               bracketSpacing = true,
               lineLength = 120,
             },
+            schemaStore = {
+              enable = false,
+              url = "",
+            },
+            schemas = require("schemastore").yaml.schemas(),
+          },
+        },
+      },
+
+      jsonls = {
+        settings = {
+          json = {
+            schemas = require("schemastore").json.schemas(),
+            validate = { enable = true },
           },
         },
       },
@@ -315,3 +335,6 @@ return {
     })
   end,
 }
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et

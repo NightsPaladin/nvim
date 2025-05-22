@@ -1,12 +1,12 @@
 return {
-  'akinsho/toggleterm.nvim',
-  event = 'VeryLazy',
+  "akinsho/toggleterm.nvim",
+  event = "VeryLazy",
   config = function()
     local execs = {
-      { nil, '<Leader>1', 'Horizontal Terminal', 'horizontal', 0.3 },
-      { nil, '<Leader>2', 'Vertical Terminal', 'vertical', 0.4 },
-      { nil, '<Leader>3', 'Float Terminal', 'float', nil },
-      { 'lazygit', '<Leader>gg', 'Lazygit', 'float', nil },
+      { nil, "<Leader>1", "Horizontal Terminal", "horizontal", 0.3 },
+      { nil, "<Leader>2", "Vertical Terminal", "vertical", 0.4 },
+      { nil, "<Leader>3", "Float Terminal", "float", nil },
+      { "lazygit", "<Leader>gg", "Lazygit", "float", nil },
     }
 
     local function get_buf_size()
@@ -22,10 +22,10 @@ return {
 
     local function get_dynamic_terminal_size(direction, size)
       size = size
-      if direction ~= 'float' and tostring(size):find('.', 1, true) then
+      if direction ~= "float" and tostring(size):find(".", 1, true) then
         size = math.min(size, 1.0)
         local buf_sizes = get_buf_size()
-        local buf_size = direction == 'horizontal' and buf_sizes.height or buf_sizes.width
+        local buf_size = direction == "horizontal" and buf_sizes.height or buf_sizes.width
         return buf_size * size
       else
         return size
@@ -33,20 +33,26 @@ return {
     end
 
     local exec_toggle = function(opts)
-      local Terminal = require('toggleterm.terminal').Terminal
-      local term = Terminal:new { cmd = opts.cmd, count = opts.count, direction = opts.direction, dir = vim.fn.expand '%:p:h', env = vim.fn.environ() }
+      local Terminal = require("toggleterm.terminal").Terminal
+      local term = Terminal:new({
+        cmd = opts.cmd,
+        count = opts.count,
+        direction = opts.direction,
+        dir = vim.fn.expand("%:p:h"),
+        env = vim.fn.environ(),
+      })
       term:toggle(opts.size, opts.direction)
     end
 
     local add_exec = function(opts)
-      local binary = opts.cmd:match '(%S+)'
+      local binary = opts.cmd:match("(%S+)")
       if vim.fn.executable(binary) ~= 1 then
-        vim.notify('Skipping configuring executable ' .. binary .. '. Please make sure it is installed properly.')
+        vim.notify("Skipping configuring executable " .. binary .. ". Please make sure it is installed properly.")
         return
       end
 
-      vim.keymap.set({ 'n', 't' }, opts.keymap, function()
-        exec_toggle { cmd = opts.cmd, count = opts.count, direction = opts.direction, size = opts.size() }
+      vim.keymap.set({ "n", "t" }, opts.keymap, function()
+        exec_toggle({ cmd = opts.cmd, count = opts.count, direction = opts.direction, size = opts.size() })
       end, { desc = opts.label, noremap = true, silent = true })
     end
 
@@ -67,7 +73,7 @@ return {
       add_exec(opts)
     end
 
-    require('toggleterm').setup {
+    require("toggleterm").setup({
       size = 20,
       open_mapping = [[<c-\>]],
       hide_numbers = true, -- hide the number column in toggleterm buffers
@@ -77,15 +83,15 @@ return {
       start_in_insert = true,
       insert_mappings = true, -- whether or not the open mapping applies in insert mode
       persist_size = false,
-      direction = 'float',
+      direction = "float",
       close_on_exit = true, -- close the terminal window when the process exits
       shell = nil, -- change the default shell
       float_opts = {
-        border = 'rounded',
+        border = "rounded",
         winblend = 0,
         highlights = {
-          border = 'Normal',
-          background = 'Normal',
+          border = "Normal",
+          background = "Normal",
         },
       },
       winbar = {
@@ -94,29 +100,32 @@ return {
           return term.count
         end,
       },
-    }
-    vim.cmd [[
+    })
+    vim.cmd([[
   augroup terminal_setup | au!
   autocmd TermOpen * nnoremap <buffer><LeftRelease> <LeftRelease>i
   autocmd TermEnter * startinsert!
   augroup end
-  ]]
+  ]])
 
-    vim.api.nvim_create_autocmd({ 'TermEnter' }, {
-      pattern = { '*' },
+    vim.api.nvim_create_autocmd({ "TermEnter" }, {
+      pattern = { "*" },
       callback = function()
-        vim.cmd 'startinsert'
+        vim.cmd("startinsert")
         _G.set_terminal_keymaps()
       end,
     })
 
     local opts = { noremap = true, silent = true }
     function _G.set_terminal_keymaps()
-      vim.api.nvim_buf_set_keymap(0, 't', '<C-h>', [[<C-\><C-n><C-W>h]], opts)
-      vim.api.nvim_buf_set_keymap(0, 't', '<C-j>', [[<C-\><C-n><C-W>j]], opts)
-      vim.api.nvim_buf_set_keymap(0, 't', '<C-k>', [[<C-\><C-n><C-W>k]], opts)
-      vim.api.nvim_buf_set_keymap(0, 't', '<C-l>', [[<C-\><C-n><C-W>l]], opts)
-      vim.api.nvim_buf_set_keymap(0, 't', '<Esc><Esc>', [[<C-\><C-n>]], opts)
+      vim.api.nvim_buf_set_keymap(0, "t", "<C-h>", [[<C-\><C-n><C-W>h]], opts)
+      vim.api.nvim_buf_set_keymap(0, "t", "<C-j>", [[<C-\><C-n><C-W>j]], opts)
+      vim.api.nvim_buf_set_keymap(0, "t", "<C-k>", [[<C-\><C-n><C-W>k]], opts)
+      vim.api.nvim_buf_set_keymap(0, "t", "<C-l>", [[<C-\><C-n><C-W>l]], opts)
+      vim.api.nvim_buf_set_keymap(0, "t", "<Esc><Esc>", [[<C-\><C-n>]], opts)
     end
   end,
 }
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et

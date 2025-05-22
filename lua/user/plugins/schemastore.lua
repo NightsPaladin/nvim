@@ -1,5 +1,6 @@
 return {
-  "NMAC427/guess-indent.nvim", -- Detect tabstop and shiftwidth automatically
+  "b0o/schemastore.nvim",
+  lazy = true,
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
