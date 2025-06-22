@@ -11,6 +11,8 @@ return { -- Highlight, edit, and navigate code
     ensure_installed = "all",
     -- Autoinstall languages that are not installed
     auto_install = true,
+    -- Ignore these
+    ignore_install = { "ipkg" },
     highlight = {
       enable = true,
       -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
