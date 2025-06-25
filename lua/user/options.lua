@@ -1,8 +1,8 @@
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -20,7 +20,7 @@ vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 -- vim.o.mouse = 'a'
-vim.opt.mouse = 'ni' -- allow the mouse to be used in neovim
+vim.opt.mouse = "ni" -- allow the mouse to be used in neovim
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -30,7 +30,7 @@ vim.o.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
+  vim.o.clipboard = "unnamedplus"
 end)
 
 -- Enable break indent
@@ -44,7 +44,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = "yes"
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -65,10 +65,10 @@ vim.o.splitbelow = true
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
 vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Preview substitutions live, as you type!
-vim.o.inccommand = 'split'
+vim.o.inccommand = "split"
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
@@ -86,7 +86,7 @@ vim.opt.writebackup = false -- if a file is being edited by another program (or 
 vim.opt.swapfile = false -- creates a swapfile
 
 vim.opt.cmdheight = 1 -- more space in the neovim command line for displaying messages
-vim.opt.completeopt = { 'menu', 'menuone', 'noselect' } -- mostly just for cmp
+vim.opt.completeopt = { "menu", "menuone", "noselect" } -- mostly just for cmp
 vim.opt.conceallevel = 0 -- so that `` is visible in markdown files
 
 -- vim.opt.fileencoding = "utf-8" -- the encoding written to a file
@@ -105,8 +105,8 @@ vim.opt.smartindent = true -- make indenting smarter again
 vim.opt.termguicolors = true -- set term gui colors (most terminals support this)
 
 vim.opt.expandtab = true -- convert tabs to spaces
-vim.opt.shiftwidth = 4 -- the number of spaces inserted for each indentation
-vim.opt.tabstop = 4 -- insert 2 spaces for a tab
+vim.opt.shiftwidth = 2 -- the number of spaces inserted for each indentation
+vim.opt.tabstop = 2 -- insert 2 spaces for a tab
 
 vim.opt.cursorline = true -- highlight the current line
 vim.opt.cursorcolumn = true -- highlight current column
@@ -127,37 +127,37 @@ vim.opt.sidescroll = 1
 -- vim.opt.guifont = 'monospace:h17' -- the font used in graphical neovim applications
 vim.opt.title = false
 
-vim.opt.colorcolumn = '80'
+vim.opt.colorcolumn = "80"
 -- vim.opt.colorcolumn = '120'
 
 vim.opt.autoread = true
 
-vim.opt.fillchars = vim.opt.fillchars + 'eob: '
-vim.opt.fillchars:append {
-  stl = ' ',
-}
+vim.opt.fillchars = vim.opt.fillchars + "eob: "
+vim.opt.fillchars:append({
+  stl = " ",
+})
 
 vim.opt.wildignore = { -- Automatically ignore the following file types
-  '.git,.svn,CVS',
-  '*.o,*.obj,*.a,*.class,*.mo,*.la,*.so',
-  '*~,*.swp',
-  '*.jpg,*.png,*.xpm,*.gif',
-  '*.pyc',
-  'tags,*.tags',
-  'log/**',
-  'tmp/**',
-  '*DS_Store',
+  ".git,.svn,CVS",
+  "*.o,*.obj,*.a,*.class,*.mo,*.la,*.so",
+  "*~,*.swp",
+  "*.jpg,*.png,*.xpm,*.gif",
+  "*.pyc",
+  "tags,*.tags",
+  "log/**",
+  "tmp/**",
+  "*DS_Store",
 }
 
-vim.opt.shortmess:append 'c'
+vim.opt.shortmess:append("c")
 -- vim.opt.iskeyword:append("-") -- hyphenated words recognized by searches
-vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- separate vim plugins from neovim in case vim still in use
+vim.opt.runtimepath:remove("/usr/share/vim/vimfiles") -- separate vim plugins from neovim in case vim still in use
 
 -- Disable providers we do not care about
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_perl_provider = 0
 
-vim.cmd 'set whichwrap+=<,>,[,],h,l'
+vim.cmd("set whichwrap+=<,>,[,],h,l")
 -- vim.cmd [[set iskeyword+=-]]
 
 vim.g.netrw_banner = 0

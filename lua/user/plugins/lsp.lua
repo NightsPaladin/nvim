@@ -236,6 +236,9 @@ return {
         -- capabilities = {},
         settings = {
           Lua = {
+            runtime = {
+              version = "Lua 5.4",
+            },
             completion = {
               callSnippet = "Replace",
             },
@@ -250,7 +253,7 @@ return {
           yaml = {
             format = {
               enable = true,
-              singleQuote = false,
+              -- singleQuote = false,
               bracketSpacing = true,
               lineLength = 120,
             },
