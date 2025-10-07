@@ -279,10 +279,10 @@ return { -- Fuzzy Finder (files, lsp, etc)
           -- theme = "dropdown",
           mappings = vim.tbl_deep_extend("force", multi_open_mappings, {
             i = {
-              ["<C-f>"] = ts_select_dir_for_grep,
+              ["<C-S-f>"] = ts_select_dir_for_grep,
             },
             n = {
-              ["<C-f>"] = ts_select_dir_for_grep,
+              ["<C-S-f>"] = ts_select_dir_for_grep,
             },
           }),
         },
