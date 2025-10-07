@@ -8,7 +8,7 @@ spec("user.colorscheme")
 -- I don't need this as telescope and Shift+H/L can move between files.
 -- I think it's primarily for a VS Code-like experience.
 -- spec("user.plugins.bufferline")
-
+spec("user.plugins.ai")
 spec("user.plugins.breadcrumbs")
 spec("user.plugins.cmp")
 spec("user.plugins.colorizer")

@@ -90,6 +90,11 @@ return { -- Autocompletion
       default = { "lsp", "path", "snippets", "lazydev" },
       providers = {
         lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
+        path = {
+          enabled = function()
+            return vim.bo.filetype ~= "copilot-chat"
+          end,
+        },
       },
     },
 
