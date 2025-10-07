@@ -26,7 +26,7 @@ return {
           accept_line = false,   -- Disabled by default
           next = "<C-]>",        -- Next suggestion (Ctrl+])
           prev = "<C-[>",        -- Previous suggestion (Ctrl+[)
-          dismiss = "<C-e>",     -- Dismiss suggestion
+          dismiss = "<Esc>",     -- Dismiss suggestion
           
           -- Alternative: If you configure your terminal for Option key
           -- (see instructions below), you can uncomment these:
@@ -63,16 +63,16 @@ return {
       user = user:sub(1, 1):upper() .. user:sub(2)
       
       return {
-        model = 'claude-3.5-sonnet', -- or 'gpt-4o', 'gemini-2.0-flash-exp'
+        model = 'gpt-4o', -- 'claude-3.5-sonnet', -- or 'gpt-4o', 'gemini-2.0-flash-exp'
         auto_insert_mode = true,
         show_help = true,
         question_header = "  " .. user .. " ",
         answer_header = "  Copilot ",
         window = {
-          layout = 'float',
-          width = 0.8,
-          height = 0.8,
-          border = 'rounded',
+          layout = 'vertical',
+          width = 0.4,
+          height = 1,
+          border = 'none',
         },
         prompts = {
           Explain = {
@@ -187,47 +187,47 @@ return {
   -- Uncomment to use Claude, OpenAI, Gemini, or Ollama
   -- Can be used alongside Copilot without conflicts
   -- Uses UPPERCASE second letter (<Space>aA, <Space>aC, etc.) to differentiate from Copilot
-  {
-    "olimorris/codecompanion.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
-    opts = {
-      adapters = {
-        anthropic = function()
-          return require("codecompanion.adapters").extend("anthropic", {
-            env = { api_key = "ANTHROPIC_API_KEY" },
-            schema = { model = { default = "claude-sonnet-4-5-20250929" } },
-          })
-        end,
-        openai = function()
-          return require("codecompanion.adapters").extend("openai", {
-            env = { api_key = "OPENAI_API_KEY" },
-            schema = { model = { default = "gpt-4o" } },
-          })
-        end,
-        gemini = function()
-          return require("codecompanion.adapters").extend("gemini", {
-            env = { api_key = "GEMINI_API_KEY" },
-            schema = { model = { default = "gemini-2.0-flash-exp" } },
-          })
-        end,
-      },
-      strategies = {
-        chat = { adapter = "anthropic" },
-        inline = { adapter = "anthropic" },
-      },
-    },
-    keys = {
-      -- Using UPPERCASE second letter to differentiate from Copilot (lowercase)
-      -- All under <leader>a prefix
-      { "<leader>aA", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat (CodeCompanion)", mode = { "n", "v" } },
-      { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions (CodeCompanion)", mode = { "n", "v" } },
-      { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant (CodeCompanion)", mode = "v" },
-    },
-  },
+  -- {
+  --   "olimorris/codecompanion.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  --   cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
+  --   opts = {
+  --     adapters = {
+  --       anthropic = function()
+  --         return require("codecompanion.adapters").extend("anthropic", {
+  --           env = { api_key = "ANTHROPIC_API_KEY" },
+  --           schema = { model = { default = "claude-sonnet-4-5-20250929" } },
+  --         })
+  --       end,
+  --       openai = function()
+  --         return require("codecompanion.adapters").extend("openai", {
+  --           env = { api_key = "OPENAI_API_KEY" },
+  --           schema = { model = { default = "gpt-4o" } },
+  --         })
+  --       end,
+  --       gemini = function()
+  --         return require("codecompanion.adapters").extend("gemini", {
+  --           env = { api_key = "GEMINI_API_KEY" },
+  --           schema = { model = { default = "gemini-2.0-flash-exp" } },
+  --         })
+  --       end,
+  --     },
+  --     strategies = {
+  --       chat = { adapter = "anthropic" },
+  --       inline = { adapter = "anthropic" },
+  --     },
+  --   },
+  --   keys = {
+  --     -- Using UPPERCASE second letter to differentiate from Copilot (lowercase)
+  --     -- All under <leader>a prefix
+  --     { "<leader>aA", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat (CodeCompanion)", mode = { "n", "v" } },
+  --     { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions (CodeCompanion)", mode = { "n", "v" } },
+  --     { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant (CodeCompanion)", mode = "v" },
+  --   },
+  -- },
 
   -- ============================================================================
   -- BONUS: Codeium (Free Copilot Alternative)
