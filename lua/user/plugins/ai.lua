@@ -111,6 +111,9 @@ return {
       }
     end,
     keys = {
+      -- Submit prompt in chat (works in insert mode!)
+      { "<C-s>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
+      
       -- Quick chat
       { "<leader>aa", function() require("CopilotChat").toggle() end, desc = "Toggle (CopilotChat)", mode = { "n", "v" } },
       { "<leader>ax", function() require("CopilotChat").reset() end, desc = "Clear (CopilotChat)", mode = { "n", "v" } },
@@ -137,7 +140,7 @@ return {
       
       -- Git integration
       { "<leader>ac", ":CopilotChatCommit<CR>", desc = "Generate Commit Message" },
-      { "<leader>aC", ":CopilotChatCommitStaged<CR>", desc = "Generate Commit Message (Staged)" },
+      { "<leader>as", ":CopilotChatCommitStaged<CR>", desc = "Generate Commit Message (Staged)" },
     },
     config = function(_, opts)
       local chat = require("CopilotChat")
@@ -183,45 +186,48 @@ return {
   -- ============================================================================
   -- Uncomment to use Claude, OpenAI, Gemini, or Ollama
   -- Can be used alongside Copilot without conflicts
-  -- {
-  --   "olimorris/codecompanion.nvim",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --   },
-  --   cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
-  --   opts = {
-  --     adapters = {
-  --       anthropic = function()
-  --         return require("codecompanion.adapters").extend("anthropic", {
-  --           env = { api_key = "ANTHROPIC_API_KEY" },
-  --           schema = { model = { default = "claude-3-5-sonnet-20241022" } },
-  --         })
-  --       end,
-  --       openai = function()
-  --         return require("codecompanion.adapters").extend("openai", {
-  --           env = { api_key = "OPENAI_API_KEY" },
-  --           schema = { model = { default = "gpt-4o" } },
-  --         })
-  --       end,
-  --       gemini = function()
-  --         return require("codecompanion.adapters").extend("gemini", {
-  --           env = { api_key = "GEMINI_API_KEY" },
-  --           schema = { model = { default = "gemini-2.0-flash-exp" } },
-  --         })
-  --       end,
-  --     },
-  --     strategies = {
-  --       chat = { adapter = "anthropic" },
-  --       inline = { adapter = "anthropic" },
-  --     },
-  --   },
-  --   keys = {
-  --     { "<leader>ca", "<cmd>CodeCompanionActions<CR>", desc = "CodeCompanion Actions", mode = { "n", "v" } },
-  --     { "<leader>cc", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat", mode = { "n", "v" } },
-  --     { "<leader>ci", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant", mode = "v" },
-  --   },
-  -- },
+  -- Uses UPPERCASE second letter (<Space>aA, <Space>aC, etc.) to differentiate from Copilot
+  {
+    "olimorris/codecompanion.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
+    opts = {
+      adapters = {
+        anthropic = function()
+          return require("codecompanion.adapters").extend("anthropic", {
+            env = { api_key = "ANTHROPIC_API_KEY" },
+            schema = { model = { default = "claude-sonnet-4-5-20250929" } },
+          })
+        end,
+        openai = function()
+          return require("codecompanion.adapters").extend("openai", {
+            env = { api_key = "OPENAI_API_KEY" },
+            schema = { model = { default = "gpt-4o" } },
+          })
+        end,
+        gemini = function()
+          return require("codecompanion.adapters").extend("gemini", {
+            env = { api_key = "GEMINI_API_KEY" },
+            schema = { model = { default = "gemini-2.0-flash-exp" } },
+          })
+        end,
+      },
+      strategies = {
+        chat = { adapter = "anthropic" },
+        inline = { adapter = "anthropic" },
+      },
+    },
+    keys = {
+      -- Using UPPERCASE second letter to differentiate from Copilot (lowercase)
+      -- All under <leader>a prefix
+      { "<leader>aA", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat (CodeCompanion)", mode = { "n", "v" } },
+      { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions (CodeCompanion)", mode = { "n", "v" } },
+      { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant (CodeCompanion)", mode = "v" },
+    },
+  },
 
   -- ============================================================================
   -- BONUS: Codeium (Free Copilot Alternative)
@@ -328,19 +334,56 @@ return {
 -- 3. Uncomment the copilot provider config above
 --
 --
--- ## Key Bindings (with <leader> as Space)
+-- ## Quick Reference: AI Keybindings
 --
+-- ```
+-- ┌─────────────────────────────────────────────────────────┐
+-- │ All under <leader>a prefix                              │
+-- │ Second letter: lowercase = Copilot, UPPERCASE = CodeC.  │
+-- ├─────────────────────────────────────────────────────────┤
+-- │ <Space>aa - Copilot Chat                                │
+-- │ <Space>aA - CodeCompanion Chat                          │
+-- │                                                          │
+-- │ <Space>ax - Clear Copilot chat                          │
+-- │ <Space>aq - Quick question (Copilot)                    │
+-- │ <Space>ap - Prompt actions (Copilot)                    │
+-- │                                                          │
+-- │ <Space>aC - CodeCompanion Actions                       │
+-- │ <Space>aI - CodeCompanion Inline (visual)               │
+-- │                                                          │
+-- │ Visual mode (works with active chat):                   │
+-- │ <Space>ae - Explain                                     │
+-- │ <Space>ar - Review                                      │
+-- │ <Space>af - Fix                                         │
+-- │ <Space>ao - Optimize                                    │
+-- │ <Space>ad - Document                                    │
+-- │ <Space>at - Tests                                       │
+-- │                                                          │
+-- │ Other:                                                  │
+-- │ <Space>aD - Fix diagnostic                              │
+-- │ <Space>ac - Commit message                              │
+-- │ <Space>as - Commit staged (note: 's' not 'C')          │
+-- └─────────────────────────────────────────────────────────┘
+-- ```
+--
+-- **Pattern:** `<Space>a` + lowercase = Copilot, UPPERCASE = CodeCompanion
+-- Everything stays under the `<Space>a` AI prefix!
+-- Your existing `<Space>c` prefix remains free for code actions!
+--
+--
+
 -- ### Copilot Suggestions (Insert Mode)
 -- - `Ctrl+g` - Accept full suggestion
 -- - `Ctrl+]` - Next suggestion
 -- - `Ctrl+[` - Previous suggestion
 -- - `Ctrl+e` - Dismiss suggestion
 --
--- ### CopilotChat
--- - `<Space>aa` - Toggle chat
+-- ### CopilotChat (Primary AI - lowercase second letter)
+-- - `<Space>aa` - Toggle Copilot chat
 -- - `<Space>ax` - Clear chat
 -- - `<Space>aq` - Quick question
 -- - `<Space>ap` - Show prompt actions
+-- - `Ctrl+s` - Submit message (works in insert mode!)
 --
 -- **Visual Mode (select code first):**
 -- - `<Space>ae` - Explain code
@@ -353,12 +396,18 @@ return {
 -- **Other:**
 -- - `<Space>aD` - Fix diagnostic error
 -- - `<Space>ac` - Generate commit message
--- - `<Space>aC` - Generate commit (staged)
+-- - `<Space>as` - Generate commit (staged)
 --
--- ### CodeCompanion (if enabled)
--- - `<Space>ca` - Actions menu
--- - `<Space>cc` - Toggle chat
--- - `<Space>ci` - Inline assistant (visual mode)
+-- ### CodeCompanion (Alternative AI - UPPERCASE second letter, if enabled)
+-- - `<Space>aA` - Toggle CodeCompanion chat (uses your API key)
+-- - `<Space>aC` - CodeCompanion actions menu
+-- - `<Space>aI` - Inline assistant (visual mode)
+--
+-- **Key Organization:**
+-- - `<Space>a` + lowercase = Copilot (GitHub subscription, Claude 3.5)
+-- - `<Space>a` + UPPERCASE = CodeCompanion (direct API, Claude 4.5)
+-- - Everything under the same `<Space>a` prefix!
+--
 --
 --
 -- ## Integration Modes
@@ -412,12 +461,33 @@ return {
 --
 -- ## Multi-Provider Setup
 --
--- You can enable multiple AI providers:
--- 1. Keep Copilot for inline suggestions
--- 2. Enable CodeCompanion for Claude/GPT chat
--- 3. They work together without conflicts
+-- You can enable multiple AI providers side-by-side:
+-- 1. **Copilot** (lowercase) - Uses your GitHub Copilot subscription
+-- 2. **CodeCompanion** (UPPERCASE) - Uses your direct API keys
 --
--- Example: Use Copilot keybinds (<Space>a*) and CodeCompanion (<Space>c*)
+-- ### Clean Keybinding Organization
+-- ```
+-- <Space>a + lowercase letter:
+--   <Space>aa - Copilot chat
+--   <Space>ae - Explain
+--   <Space>ar - Review
+--   <Space>af - Fix
+--   ... etc
+--
+-- <Space>a + UPPERCASE letter:
+--   <Space>aA - CodeCompanion chat
+--   <Space>aC - CodeCompanion actions
+--   <Space>aI - CodeCompanion inline
+-- ```
+--
+-- **No conflicts!** Same prefix, different case for second letter.
+-- Think of it as: regular = Copilot, shift second key = CodeCompanion
+--
+-- ### Why Use Both?
+-- - **Copilot**: Included with your subscription, Claude 3.5 Sonnet
+-- - **CodeCompanion**: Direct API access, Claude Sonnet 4.5 (latest model!)
+-- - Switch between models based on the task
+-- - Both can be open simultaneously
 --
 --
 -- ## LazyVim-Inspired Features
