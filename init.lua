@@ -9,6 +9,7 @@ spec("user.colorscheme")
 -- I think it's primarily for a VS Code-like experience.
 -- spec("user.plugins.bufferline")
 spec("user.plugins.ai")
+require("user.plugins.copilot-telescope")
 spec("user.plugins.breadcrumbs")
 spec("user.plugins.cmp")
 spec("user.plugins.colorizer")
