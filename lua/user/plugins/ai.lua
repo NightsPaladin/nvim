@@ -112,7 +112,7 @@ return {
     end,
     keys = {
       -- Submit prompt in chat (works in insert mode!)
-      { "<C-s>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
+      { "<C-CR>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
       
       -- Quick chat
       { "<leader>aa", function() require("CopilotChat").toggle() end, desc = "Toggle (CopilotChat)", mode = { "n", "v" } },
@@ -383,7 +383,7 @@ return {
 -- - `<Space>ax` - Clear chat
 -- - `<Space>aq` - Quick question
 -- - `<Space>ap` - Show prompt actions
--- - `Ctrl+s` - Submit message (works in insert mode!)
+-- - `Ctrl+Enter` - Submit message (works in insert mode!)
 --
 -- **Visual Mode (select code first):**
 -- - `<Space>ae` - Explain code
