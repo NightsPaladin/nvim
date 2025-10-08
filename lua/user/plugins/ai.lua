@@ -124,9 +124,6 @@ return {
           end
         end, desc = "Quick Chat (CopilotChat)", mode = { "n", "v" } },
       
-      -- Prompt actions
-      { "<leader>ap", function() require("CopilotChat.integrations.telescope").pick(require("CopilotChat.actions").prompt_actions()) end, desc = "Prompt Actions (CopilotChat)" },
-      
       -- Code actions
       { "<leader>ae", ":CopilotChatExplain<CR>", desc = "Explain Code", mode = "v" },
       { "<leader>ar", ":CopilotChatReview<CR>", desc = "Review Code", mode = "v" },
