@@ -7,7 +7,7 @@ return {
   -- ============================================================================
   -- GitHub Copilot with Smart blink.cmp Integration
   -- ============================================================================
-  
+
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
@@ -21,13 +21,13 @@ return {
         hide_during_completion = true,
         keymap = {
           -- macOS-friendly keybindings (Ctrl-based, works everywhere)
-          accept = "<C-g>",      -- Ctrl+g to accept (inspired by GitHub Copilot)
-          accept_word = false,   -- Disabled by default
-          accept_line = false,   -- Disabled by default
-          next = "<C-]>",        -- Next suggestion (Ctrl+])
-          prev = "<C-[>",        -- Previous suggestion (Ctrl+[)
-          dismiss = "<Esc>",     -- Dismiss suggestion
-          
+          accept = "<C-g>", -- Ctrl+g to accept (inspired by GitHub Copilot)
+          accept_word = false, -- Disabled by default
+          accept_line = false, -- Disabled by default
+          next = "<C-]>", -- Next suggestion (Ctrl+])
+          prev = "<C-[>", -- Previous suggestion (Ctrl+[)
+          dismiss = "<Esc><Esc>", -- Dismiss suggestion
+
           -- Alternative: If you configure your terminal for Option key
           -- (see instructions below), you can uncomment these:
           -- accept = "<M-CR>",     -- Option+Enter to accept
@@ -61,50 +61,50 @@ return {
     opts = function()
       local user = vim.env.USER or "User"
       user = user:sub(1, 1):upper() .. user:sub(2)
-      
+
       return {
-        model = 'gpt-4o', -- 'claude-3.5-sonnet', -- or 'gpt-4o', 'gemini-2.0-flash-exp'
+        model = "gpt-4o", -- 'claude-3.5-sonnet', -- or 'gpt-4o', 'gemini-2.0-flash-exp'
         auto_insert_mode = true,
         show_help = true,
         question_header = "  " .. user .. " ",
         answer_header = "  Copilot ",
         window = {
-          layout = 'vertical',
+          layout = "vertical",
           width = 0.4,
           height = 1,
-          border = 'none',
+          border = "none",
         },
         prompts = {
           Explain = {
-            prompt = '/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.',
+            prompt = "/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.",
           },
           Review = {
-            prompt = '/COPILOT_REVIEW Review the selected code.',
+            prompt = "/COPILOT_REVIEW Review the selected code.",
           },
           Fix = {
-            prompt = '/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed.',
+            prompt = "/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed.",
           },
           Optimize = {
-            prompt = '/COPILOT_GENERATE Optimize the selected code to improve performance and readability.',
+            prompt = "/COPILOT_GENERATE Optimize the selected code to improve performance and readability.",
           },
           Docs = {
-            prompt = '/COPILOT_GENERATE Please add documentation comments to the selected code.',
+            prompt = "/COPILOT_GENERATE Please add documentation comments to the selected code.",
           },
           Tests = {
-            prompt = '/COPILOT_GENERATE Please generate tests for my code.',
+            prompt = "/COPILOT_GENERATE Please generate tests for my code.",
           },
           FixDiagnostic = {
-            prompt = 'Please assist with the following diagnostic issue in file:',
-            selection = require('CopilotChat.select').diagnostics,
+            prompt = "Please assist with the following diagnostic issue in file:",
+            selection = require("CopilotChat.select").diagnostics,
           },
           Commit = {
-            prompt = 'Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.',
-            selection = require('CopilotChat.select').gitdiff,
+            prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
+            selection = require("CopilotChat.select").gitdiff,
           },
           CommitStaged = {
-            prompt = 'Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.',
+            prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
             selection = function(source)
-              return require('CopilotChat.select').gitdiff(source, true)
+              return require("CopilotChat.select").gitdiff(source, true)
             end,
           },
         },
@@ -113,17 +113,36 @@ return {
     keys = {
       -- Submit prompt in chat (works in insert mode!)
       { "<C-CR>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
-      
+
       -- Quick chat
-      { "<leader>aa", function() require("CopilotChat").toggle() end, desc = "Toggle (CopilotChat)", mode = { "n", "v" } },
-      { "<leader>ax", function() require("CopilotChat").reset() end, desc = "Clear (CopilotChat)", mode = { "n", "v" } },
-      { "<leader>aq", function()
+      {
+        "<leader>aa",
+        function()
+          require("CopilotChat").toggle()
+        end,
+        desc = "Toggle (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>ax",
+        function()
+          require("CopilotChat").reset()
+        end,
+        desc = "Clear (CopilotChat)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>aq",
+        function()
           local input = vim.fn.input("Quick Chat: ")
           if input ~= "" then
             require("CopilotChat").ask(input)
           end
-        end, desc = "Quick Chat (CopilotChat)", mode = { "n", "v" } },
-      
+        end,
+        desc = "Quick Chat (CopilotChat)",
+        mode = { "n", "v" },
+      },
+
       -- Code actions
       { "<leader>ae", ":CopilotChatExplain<CR>", desc = "Explain Code", mode = "v" },
       { "<leader>ar", ":CopilotChatReview<CR>", desc = "Review Code", mode = "v" },
@@ -131,10 +150,10 @@ return {
       { "<leader>ao", ":CopilotChatOptimize<CR>", desc = "Optimize Code", mode = "v" },
       { "<leader>ad", ":CopilotChatDocs<CR>", desc = "Add Documentation", mode = "v" },
       { "<leader>at", ":CopilotChatTests<CR>", desc = "Generate Tests", mode = "v" },
-      
+
       -- Fix diagnostic
       { "<leader>aD", ":CopilotChatFixDiagnostic<CR>", desc = "Fix Diagnostic" },
-      
+
       -- Git integration
       { "<leader>ac", ":CopilotChatCommit<CR>", desc = "Generate Commit Message" },
       { "<leader>as", ":CopilotChatCommitStaged<CR>", desc = "Generate Commit Message (Staged)" },
@@ -142,7 +161,7 @@ return {
     config = function(_, opts)
       local chat = require("CopilotChat")
       chat.setup(opts)
-      
+
       -- Auto-insert mode for chat buffer
       vim.api.nvim_create_autocmd("BufEnter", {
         pattern = "copilot-chat",
@@ -159,7 +178,7 @@ return {
   -- ============================================================================
   -- By default, Copilot uses ghost text (recommended).
   -- Uncomment ONE of these if you want Copilot in blink.cmp menu:
-  
+
   -- Option A: giuxtaposition/blink-cmp-copilot (simpler)
   -- {
   --   "giuxtaposition/blink-cmp-copilot",
@@ -173,7 +192,7 @@ return {
   --   dependencies = { "zbirenbaum/copilot.lua" },
   --   opts = {},
   -- },
-  
+
   -- NOTE: If you uncomment either blink-copilot plugin above,
   -- add the copilot source to your cmp.lua file.
   -- See documentation at the end of this file for details.
@@ -294,10 +313,10 @@ return {
 --     sources = {
 --       -- Add your existing sources here
 --       default = { 'lsp', 'path', 'snippets', 'buffer' },
---       
+--
 --       providers = {
 --         -- Your existing provider config...
---         
+--
 --         -- REQUIRED: Fixes CopilotChat "/" commands
 --         -- This prevents path completion from interfering with chat commands
 --         path = {
@@ -305,7 +324,7 @@ return {
 --             return vim.bo.filetype ~= "copilot-chat"
 --           end,
 --         },
---         
+--
 --         -- OPTIONAL: Add Copilot to completion menu
 --         -- Only add this if you uncommented blink-copilot in ai.lua
 --         -- and want Copilot suggestions in the menu instead of just ghost text
@@ -319,7 +338,7 @@ return {
 --         ]]--
 --       },
 --     },
---     
+--
 --     -- Your other blink.cmp settings...
 --   },
 -- }
@@ -618,7 +637,7 @@ return {
 -- ### Recommended Setup for macOS:
 -- 1. **Start with Ctrl keybindings** (current default)
 -- 2. Try them for a few days
--- 3. If you want Option, configure iTerm2 
+-- 3. If you want Option, configure iTerm2
 -- 4. Keep Right Option normal for special characters
 --
 --
