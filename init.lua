@@ -4,6 +4,9 @@ require("user.keymaps")
 require("user.autocommands")
 spec("user.colorscheme")
 
+-- Add Snacks first (minimal, safe defaults configured in user.plugins.snacks)
+spec("user.plugins.snacks")
+
 -- Plugin to provide "tabs" at the top, showing all open buffers/tabs.
 -- I don't need this as telescope and Shift+H/L can move between files.
 -- I think it's primarily for a VS Code-like experience.
@@ -16,14 +19,27 @@ spec("user.plugins.colorizer")
 spec("user.plugins.conform")
 spec("user.plugins.gitsigns")
 spec("user.plugins.guessindent")
-spec("user.plugins.indentline")
+
+-- Replaced by mini.indentscope (scope-focused indent guides)
+-- spec("user.plugins.indentline")
+
 spec("user.plugins.lazydev")
 spec("user.plugins.lsp")
-spec("user.plugins.lualine")
+
+-- Replaced by mini.statusline (simple statusline)
+-- spec("user.plugins.lualine")
+
+-- Expand mini.nvim for overlaps (surround, pairs, comment, files, statusline, etc.)
 spec("user.plugins.mini")
+
 spec("user.plugins.navic")
-spec("user.plugins.nvimsurround")
-spec("user.plugins.nvimtree")
+
+-- Replaced by mini.surround
+-- spec("user.plugins.nvimsurround")
+
+-- Replaced by mini.files (minimal file explorer)
+-- spec("user.plugins.nvimtree")
+
 spec("user.plugins.gitlinker")
 -- spec("user.plugins.project")
 spec("user.plugins.sops")
@@ -41,6 +57,6 @@ require("user.lazy")
 -- Or use telescope!
 -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
 -- you can continue same window with `<space>sr` which resumes last telescope search
-
+--
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
