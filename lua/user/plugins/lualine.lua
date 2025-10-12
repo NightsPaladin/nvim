@@ -1,6 +1,6 @@
 return {
   "nvim-lualine/lualine.nvim",
-  config = function()
+  opts = function()
     local hide_in_width = function()
       return vim.fn.winwidth(0) > 80
     end
@@ -19,43 +19,36 @@ return {
       cond = hide_in_width,
     }
 
-    -- local custom_fname = require("lualine.components.filename"):extend()
-    -- local highlight = require("lualine.highlight")
-    -- local default_status_colors = { saved = "#348934", modified = "#9A3434" }
+    -- local filename = {
+    --   "filename",
+    --   file_status = true,  -- Shows [+] for modified, [RO] for readonly
+    --   path = 1,            -- 0 = just filename, 1 = relative path, 2 = absolute path
     --
-    -- function custom_fname:init(options)
-    --   custom_fname.super.init(self, options)
-    --   self.status_colors = {
-    --     saved = highlight.create_component_highlight_group(
-    --       { fg = default_status_colors.saved },
-    --       "filename_status_saved",
-    --       self.options
-    --     ),
-    --     modified = highlight.create_component_highlight_group(
-    --       { fg = default_status_colors.modified },
-    --       "filename_status_modified",
-    --       self.options
-    --     ),
-    --   }
-    --   if self.options.color == nil then
-    --     self.options.color = ""
-    --   end
-    -- end
-    --
-    -- function custom_fname:update_status()
-    --   local data = custom_fname.super.update_status(self)
-    --   data = highlight.component_format_highlight(
-    --     vim.bo.modified and self.status_colors.modified or self.status_colors.saved
-    --   ) .. data
-    --   return data
-    -- end
+    --   -- Custom symbols for file status
+    --   symbols = {
+    --     modified = "●",      -- Clear dot indicator
+    --     readonly = " ",      -- Lock symbol for readonly
+    --     unnamed = "[No Name]",
+    --   },
+    -- }
 
     local filename = {
-      -- custom_fname,
-      "filename",
-      file_status = true, -- displays file status (readonly, modified, etc.)
-      path = 1, -- 0 = just filename, 1 = relative path, 2 = absolute path
-    }
+    "filename",
+    file_status = true,
+    path = 1,
+    symbols = {
+      modified = "●",  -- No symbol, just color
+      readonly = " ",
+      unnamed = "[No Name]",
+    },
+    -- Filename turns orange when modified
+    color = function()
+      if vim.bo.modified then
+        return { fg = "#ff9e64", gui = "bold" }  -- Orange + bold
+      end
+      return nil  -- Default color when not modified
+    end,
+  }
 
     local filetype = {
       "filetype",
@@ -79,7 +72,7 @@ return {
       return "spaces: " .. vim.api.nvim_get_option_value("shiftwidth", { buf = 0 })
     end
 
-    require("lualine").setup({
+    return {
       options = {
         theme = "base16",
         component_separators = { left = "", right = "" },
@@ -97,7 +90,7 @@ return {
         lualine_z = { location },
       },
       extensions = { "quickfix", "man", "fugitive" },
-    })
+    }
   end,
 }
 

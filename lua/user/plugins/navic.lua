@@ -1,8 +1,8 @@
 return {
   "SmiteshP/nvim-navic",
-  config = function()
+  opts = function()
     local icons = require("user.icons")
-    require("nvim-navic").setup({
+    return {
       icons = icons.kind,
       highlight = true,
       lsp = {
@@ -12,7 +12,7 @@ return {
       separator = " " .. icons.ui.ChevronRight .. " ",
       depth_limit = 0,
       depth_limit_indicator = "..",
-    })
+    }
   end,
 }
 

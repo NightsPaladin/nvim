@@ -28,6 +28,9 @@ return { -- Autocompletion
         },
       },
       opts = {},
+      config = function()
+        require("snippets.emoji")
+      end,
     },
     "folke/lazydev.nvim",
   },

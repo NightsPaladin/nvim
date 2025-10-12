@@ -15,7 +15,7 @@ return {
     event = "InsertEnter",
     opts = {
       suggestion = {
-        enabled = true,
+        enabled = false,
         auto_trigger = true,
         -- Hide ghost text when blink.cmp menu is open
         hide_during_completion = true,
@@ -39,12 +39,30 @@ return {
       },
       panel = { enabled = false }, -- Use CopilotChat instead
       filetypes = {
-        yaml = true,
-        markdown = true,
+        ["*"] = true, -- Enable for all filetypes
+
+        -- Only disable special buffers
         help = false,
-        gitcommit = true,
         gitrebase = false,
+        [""] = false,
         ["."] = false,
+        TelescopePrompt = false,
+        NvimTree = false,
+        ["neo-tree"] = false,
+        Trouble = false,
+        lazy = false,
+        mason = false,
+        ["copilot-chat"] = false,
+      },
+    },
+    keys = {
+      {
+        "<leader>ta",
+        "<cmd>Copilot toggle<CR>",
+        -- function()
+        --   require("copilot.suggestion").toggle_auto_trigger()
+        -- end,
+        desc = "[T]oggle [A]I (Copilot)",
       },
     },
   },

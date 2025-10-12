@@ -1,26 +1,25 @@
-return { -- Adds git related signs to the gutter, as well as utilities for managing changes
+return {
   "lewis6991/gitsigns.nvim",
   event = "BufEnter",
-  config = function()
+
+  keys = {
+    { "<leader>gj", "<cmd>lua require 'gitsigns'.next_hunk({navigation_message = false})<cr>", desc = "Next Hunk" },
+    { "<leader>gk", "<cmd>lua require 'gitsigns'.prev_hunk({navigation_message = false})<cr>", desc = "Prev Hunk" },
+    { "<leader>gp", "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", desc = "Preview Hunk" },
+    { "<leader>gr", "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", desc = "Reset Hunk" },
+    { "<leader>gl", "<cmd>lua require 'gitsigns'.blame_line()<cr>", desc = "Blame" },
+    { "<leader>gR", "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", desc = "Reset Buffer" },
+    { "<leader>gs", "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", desc = "Stage Hunk" },
+    { "<leader>gu", "<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>", desc = "Undo Stage Hunk" },
+    { "<leader>gd", "<cmd>Gitsigns diffthis HEAD<cr>", desc = "Git Diff" },
+    { "<leader>go", "<cmd>Telescope git_status<cr>", desc = "Open changed file" },
+    { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Checkout branch" },
+    { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Checkout commit" },
+  },
+
+  opts = function()
     local icons = require("user.icons")
-
-    local wk = require("which-key")
-    wk.add({
-      { "<leader>gj", "<cmd>lua require 'gitsigns'.next_hunk({navigation_message = false})<cr>", desc = "Next Hunk" },
-      { "<leader>gk", "<cmd>lua require 'gitsigns'.prev_hunk({navigation_message = false})<cr>", desc = "Prev Hunk" },
-      { "<leader>gp", "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", desc = "Preview Hunk" },
-      { "<leader>gr", "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", desc = "Reset Hunk" },
-      { "<leader>gl", "<cmd>lua require 'gitsigns'.blame_line()<cr>", desc = "Blame" },
-      { "<leader>gR", "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", desc = "Reset Buffer" },
-      { "<leader>gs", "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", desc = "Stage Hunk" },
-      { "<leader>gu", "<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>", desc = "Undo Stage Hunk" },
-      { "<leader>gd", "<cmd>Gitsigns diffthis HEAD<cr>", desc = "Git Diff" },
-      { "<leader>go", "<cmd>Telescope git_status<cr>", desc = "Open changed file" },
-      { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Checkout branch" },
-      { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Checkout commit" },
-    })
-
-    require("gitsigns").setup({
+    return {
       signs = {
         add = { text = icons.ui.BoldLineMiddle },
         change = { text = icons.ui.BoldLineDashedMiddle },
@@ -43,17 +42,8 @@ return { -- Adds git related signs to the gutter, as well as utilities for manag
         row = 0,
         col = 1,
       },
-    })
+    }
   end,
-  -- opts = {
-  --   signs = {
-  --     add = { text = "+" },
-  --     change = { text = "~" },
-  --     delete = { text = "_" },
-  --     topdelete = { text = "‾" },
-  --     changedelete = { text = "~" },
-  --   },
-  -- },
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`

@@ -44,11 +44,15 @@ return { -- Useful plugin to show you pending keybinds.
 
     -- Document existing key chains
     spec = {
+      { "<leader>a", group = "[A]I" },
+      { "<leader>b", group = "[B]uffer" },
       { "<leader>c", group = "[C]ode" },
       { "<leader>f", group = "[F]ind" },
       { "<leader>g", group = "[G]it" },
-      { "<leader>t", group = "[T]oggle" },
       { "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+      { "<leader>s", group = "[S]nacks Pickers" },
+      { "<leader>t", group = "[T]oggle" },
+      { "<leader>u", group = "[U]I Toggles" },
       { "<leader>z", group = "Telekasten" },
     },
   },
