@@ -160,6 +160,14 @@ return {
         desc = "Quick Chat (CopilotChat)",
         mode = { "n", "v" },
       },
+      {
+        "<leader>am",
+        function ()
+          require("CopilotChat").select_model()
+        end,
+        desc = "Select Model (CopilotChat)",
+        mode = { "n", "v" },
+      },
 
       -- Code actions
       { "<leader>ae", ":CopilotChatExplain<CR>", desc = "Explain Code", mode = "v" },
