@@ -18,7 +18,30 @@ return {
     require("mini.comment").setup({})
 
     -- Auto-pair brackets, quotes, etc.
-    require("mini.pairs").setup({})
+    require("mini.pairs").setup({
+      mappings = {
+        ['"'] = { 
+          action = 'closeopen', 
+          pair = '""', 
+          neigh_pattern = '[^%a\\][^%a]',
+          register = { cr = false } 
+        },
+        ['`'] = { 
+          action = 'closeopen', 
+          pair = '``', 
+          neigh_pattern = '[^%a\\][^%a]',
+          register = { cr = false } 
+        },
+        -- Single quote already has left-side word detection,
+        -- but you could make it bidirectional:
+        ["'"] = { 
+          action = 'closeopen', 
+          pair = "''", 
+          neigh_pattern = '[^%a\\][^%a]',
+          register = { cr = false } 
+        },
+      }
+    })
 
     -- Surround operations (replaces nvim-surround)
     -- gsa - add surround
