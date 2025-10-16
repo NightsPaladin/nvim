@@ -129,9 +129,6 @@ return {
       }
     end,
     keys = {
-      -- Submit prompt in chat (works in insert mode!)
-      { "<C-CR>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
-
       -- Quick chat
       {
         "<leader>aa",
