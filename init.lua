@@ -46,6 +46,11 @@ spec("user.plugins.todocomments") -- Highlight TODO/FIXME/etc in comments
 spec("user.plugins.gitsigns") -- Git signs in gutter, hunk navigation
 
 -- ============================================================================
+-- Debugging
+-- ============================================================================
+spec("user.plugins.dap") -- Debug Adapter Protocol
+
+-- ============================================================================
 -- AI & Copilot
 -- ============================================================================
 spec("user.plugins.ai") -- GitHub Copilot & CopilotChat
