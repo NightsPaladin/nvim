@@ -129,6 +129,16 @@ return {
       }
     end,
     keys = {
+      {
+        "<C-l>",
+        function()
+          if vim.fn.confirm('Reset chat? This cannot be undone.', '&Yes\n&No', 2) == 1 then
+            require("CopilotChat").reset()
+          end
+        end,
+        desc = "Reset CopilotChat (with confirmation)",
+        mode = { "n", "i", "v" },
+      },
       -- Quick chat
       {
         "<leader>aa",
