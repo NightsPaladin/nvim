@@ -6,71 +6,64 @@
 local colorscheme = "base16-gruvbox-dark-pale"
 
 local M = {
-  {
-    "LunarVim/darkplus.nvim",
-    name = "darkplus",
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-  },
-
-  {
-    "sjl/badwolf",
-    name = "badwolf",
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-  },
-
+  -- Only your active colorscheme loads at startup
   {
     "RRethy/nvim-base16",
     name = "base16",
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme(colorscheme)
+      vim.o.background = "dark"
+    end,
   },
 
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-  },
+  -- All alternatives lazy load
   {
     "ellisonleao/gruvbox.nvim",
     name = "gruvbox",
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    lazy = true,
+    priority = 1000,
+    opts = {
+      contrast = "hard",
+      italic = {
+        strings = false,
+        comments = false,
+        folds = true,
+        emphasis = true,
+        operators = false,
+      },
+    },
   },
   {
     "folke/tokyonight.nvim",
     name = "tokyonight",
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    lazy = true,
+    priority = 1000,
+    opts = {
+      styles = {
+        comments = { italic = false },
+      },
+    },
+  },
+  {
+    "sjl/badwolf",
+    name = "badwolf",
+    lazy = true,
+    priority = 1000,
+  },
+  {
+    "LunarVim/darkplus.nvim",
+    name = "darkplus",
+    lazy = true,
+    priority = 1000,
+  },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    lazy = true,
+    priority = 1000,
   },
 }
-
-for _, v in pairs(M) do
-  if string.find(colorscheme, v.name, 1, true) then
-    v.config = function()
-      if v.name == "tokyonight" then
-        ---@diagnostic disable-next-line: missing-fields
-        require("tokyonight").setup({
-          styles = {
-            comments = { italic = false }, -- Disable italics in comments
-          },
-        })
-      end
-      if v.name == "gruvbox" then
-        ---@diagnostic disable-next-line: missing-fields
-        require("gruvbox").setup({
-          contrast = "hard",
-          italic = {
-            strings = false,
-            comments = false,
-            folds = true,
-            emphasis = true,
-            operators = false,
-          },
-        })
-      end
-
-      vim.cmd.colorscheme(colorscheme)
-      vim.o.background = "dark"
-    end
-  end
-end
 
 return M
 

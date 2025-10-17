@@ -1,10 +1,10 @@
 return {
   "nvim-tree/nvim-tree.lua",
-  event = "VeryLazy",
+  lazy = true,
+  keys = {
+    { "<leader>e", "<cmd>NvimTreeToggle<CR>", desc = "Explorer" },
+  },
   config = function()
-    -- set the keymap for opening nvimtree
-    vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Explorer" })
-
     local icons = require("user.icons")
 
     local function on_attach(bufnr)

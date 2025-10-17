@@ -1,6 +1,6 @@
 return {
   "b0o/schemastore.nvim",
-  lazy = true,
+  -- lazy = true,
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`

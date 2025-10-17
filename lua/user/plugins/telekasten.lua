@@ -3,7 +3,7 @@ return {
   dependencies = {
     "renerocksai/calendar-vim",
   },
-  event = "VeryLazy",
+  lazy = true,
 
   -- ============================================================================
   -- Keybindings (extracted from config)

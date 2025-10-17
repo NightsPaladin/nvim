@@ -29,7 +29,10 @@ return { -- Autocompletion
       },
       opts = {},
       config = function()
-        require("snippets.emoji")
+        -- Defer emoji snippet loading to speed up startup
+        vim.defer_fn(function()
+          require("snippets.emoji")
+        end, 100)
       end,
     },
     "folke/lazydev.nvim",
