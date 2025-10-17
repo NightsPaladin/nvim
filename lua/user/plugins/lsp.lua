@@ -370,7 +370,11 @@ return {
       "helm-ls",
       "hclfmt",
     })
-    require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+    require("mason-tool-installer").setup({
+      ensure_installed = ensure_installed,
+      auto_update = false,
+      run_on_start = true,
+    })
 
     require("mason-lspconfig").setup({
       ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)

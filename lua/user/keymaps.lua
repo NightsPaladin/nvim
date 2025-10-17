@@ -169,17 +169,6 @@ keymap("n", "<RightMouse>", "<cmd>:popup mousemenu<CR>")
 keymap("n", "<Tab>", "<cmd>:popup mousemenu<CR>")
 
 -- ============================================================================
--- Plugin Toggles
--- ============================================================================
-
--- Toggle Markview (Markdown preview)
-keymap("n", "<leader>tm", "<cmd>:Markview<CR>", { desc = "[T]oggle [M]arkview" })
-
--- NOTE: Other toggles are handled by Snacks.nvim (see snacks.lua)
--- - <leader>u* for UI toggles (line numbers, wrap, spelling, etc.)
--- - <leader>t* for functional toggles (diagnostics, treesitter, AI)
-
--- ============================================================================
 -- Disabled/Alternative Keymaps
 -- ============================================================================
 -- These are commented out but provided as alternatives or learning aids

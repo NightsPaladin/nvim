@@ -22,6 +22,7 @@ spec("user.plugins.schemastore") -- JSON/YAML schemas (dependency for LSP)
 spec("user.plugins.lsp") -- LSP configuration
 spec("user.plugins.cmp") -- Completion engine
 spec("user.plugins.treesitter") -- Syntax parsing & highlighting
+spec("user.plugins.markview") -- Markdown rendering inline
 
 -- ============================================================================
 -- Editor Enhancements (Multi-purpose plugins)
