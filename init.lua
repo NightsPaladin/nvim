@@ -62,6 +62,8 @@ require("user.plugins.copilot-telescope") -- Multi-file selection for CopilotCha
 -- ============================================================================
 spec("user.plugins.telekasten") -- Personal wiki/note-taking
 spec("user.plugins.sops") -- Encrypted secrets management
+spec("user.plugins.project")
+
 
 -- ============================================================================
 -- Disabled Plugins (Replaced by other solutions)
@@ -78,9 +80,6 @@ spec("user.plugins.sops") -- Encrypted secrets management
 
 -- Replaced by mini.surround
 -- spec("user.plugins.nvimsurround")
-
--- Not currently using project management
--- spec("user.plugins.project")
 
 -- Replaced by snacks.nvim terminal and lazygit
 -- spec("user.plugins.toggleterm")
