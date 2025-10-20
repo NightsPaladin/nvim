@@ -3,7 +3,8 @@
 -- change the command in the config to whatever the name of that colorscheme is.
 --
 -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-local colorscheme = "base16-gruvbox-dark-pale"
+-- local colorscheme = "base16-gruvbox-dark-pale"
+local colorscheme = "base16-horizon-dark"
 
 local M = {
   -- Only your active colorscheme loads at startup
