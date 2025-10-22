@@ -86,7 +86,32 @@ return {
       -- Note: Default adapter is "copilot" - uses your existing GitHub Copilot subscription!
       -- No API keys needed - it uses the token from copilot.lua authentication
       strategies = {
-        chat = { adapter = "copilot" },
+        chat = {
+          adapter = "copilot",
+          -- Use snacks picker for slash commands to avoid conflicts with Telescope
+          slash_commands = {
+            ["file"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+            ["buffer"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+            ["help"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+            ["symbols"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+          },
+        },
         inline = { adapter = "copilot" },
       },
       display = {

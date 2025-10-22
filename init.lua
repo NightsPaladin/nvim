@@ -55,7 +55,7 @@ spec("user.plugins.dap") -- Debug Adapter Protocol
 -- AI & Copilot
 -- ============================================================================
 spec("user.plugins.ai") -- GitHub Copilot & CopilotChat
-require("user.plugins.copilot-telescope") -- Multi-file selection for CopilotChat
+-- require("user.plugins.copilot-telescope") -- Multi-file selection for CopilotChat
 
 -- ============================================================================
 -- Specialty & Project-Specific
