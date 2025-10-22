@@ -102,7 +102,8 @@ return { -- Autocompletion
         lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
         path = {
           enabled = function()
-            return vim.bo.filetype ~= "copilot-chat"
+            local ft = vim.bo.filetype
+            return ft ~= "copilot-chat" and ft ~= "codecompanion"
           end,
         },
       },
