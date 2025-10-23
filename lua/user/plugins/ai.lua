@@ -220,12 +220,44 @@ return {
     config = function(_, opts)
       require("codecompanion").setup(opts)
 
-      -- Auto-insert mode for chat buffer
+      -- Auto-insert mode for chat buffer + register keybindings
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "codecompanion",
         callback = function()
           vim.opt_local.relativenumber = false
           vim.opt_local.number = false
+
+          -- Explicitly register CodeCompanion keybindings with which-key
+          local ok, wk = pcall(require, "which-key")
+          if ok then
+            wk.add({
+              -- Adapter & Config
+              { "ga", desc = "Change adapter", buffer = 0 },
+              { "gs", desc = "Toggle system prompt", buffer = 0 },
+              { "gS", desc = "Show usage stats", buffer = 0 },
+
+              -- Code Blocks
+              { "gy", desc = "Yank codeblock", buffer = 0 },
+              { "gc", desc = "Insert codeblock", buffer = 0 },
+              { "gf", desc = "Fold codeblocks", buffer = 0 },
+
+              -- Context Management
+              { "gp", desc = "Pin context", buffer = 0 },
+              { "gw", desc = "Watch buffer", buffer = 0 },
+
+              -- Debug & Advanced
+              { "gd", desc = "Debug view", buffer = 0 },
+              { "gD", desc = "Super Diff", buffer = 0 },
+              { "gr", desc = "Regenerate", buffer = 0 },
+              { "gR", desc = "Go to file", buffer = 0 },
+              { "gx", desc = "Clear chat", buffer = 0 },
+              { "gM", desc = "Clear memory", buffer = 0 },
+
+              -- Tools
+              { "gt", group = "Tools", buffer = 0 },
+              { "gta", desc = "Toggle auto tools", buffer = 0 },
+            })
+          end
         end,
       })
     end,
@@ -685,7 +717,7 @@ return {
 -- - GPT-4 and GPT-4o
 -- - Claude 3.5 Sonnet
 -- - o1-preview and o1-mini
--- 
+--
 -- Switch models in chat by pressing `ga` and selecting from the list!
 --
 -- **Why use direct API access?**
