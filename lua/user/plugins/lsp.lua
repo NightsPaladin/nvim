@@ -104,16 +104,16 @@ return {
         end, "Show Line Diagnostics")
 
         -- Open diagnostics in quickfix list
-        map("<leader>cq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+        map("<leader>cq", vim.diagnostic.setloclist, "Open diagnostic [Q]uickfix list")
 
         -- Jump to next/previous diagnostic with floating window
         map("<leader>cj", function()
           vim.diagnostic.jump({ count = 1, float = true })
-        end, { desc = "Goto Next Diagnostic" })
+        end, "Goto Next Diagnostic")
 
         map("<leader>ck", function()
           vim.diagnostic.jump({ count = -1, float = true })
-        end, { desc = "Goto Previous Diagnostic" })
+        end, "Goto Previous Diagnostic")
 
         -- Show LspInfo
         map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
