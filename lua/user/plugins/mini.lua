@@ -20,27 +20,35 @@ return {
     -- Auto-pair brackets, quotes, etc.
     require("mini.pairs").setup({
       mappings = {
-        ['"'] = { 
-          action = 'closeopen', 
-          pair = '""', 
-          neigh_pattern = '[^%a\\][^%a]',
-          register = { cr = false } 
+        ['"'] = {
+          action = "closeopen",
+          pair = '""',
+          neigh_pattern = "[^%w\\][^%w]",
+          register = { cr = false },
         },
-        ['`'] = { 
-          action = 'closeopen', 
-          pair = '``', 
-          neigh_pattern = '[^%a\\][^%a]',
-          register = { cr = false } 
+        ["`"] = {
+          action = "closeopen",
+          pair = "``",
+          neigh_pattern = "[^%w\\][^%w]",
+          register = { cr = false },
         },
         -- Single quote already has left-side word detection,
         -- but you could make it bidirectional:
-        ["'"] = { 
-          action = 'closeopen', 
-          pair = "''", 
-          neigh_pattern = '[^%a\\][^%a]',
-          register = { cr = false } 
+        ["'"] = {
+          action = "closeopen",
+          pair = "''",
+          neigh_pattern = "[^%w\\][^%w]",
+          register = { cr = false },
         },
-      }
+      },
+    })
+    -- Disable backtick pairing in markdown files
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "markdown",
+      callback = function()
+        -- Disable backtick auto-pairing in markdown
+        vim.keymap.set("i", "`", "`", { buffer = true })
+      end,
     })
 
     -- Surround operations (replaces nvim-surround)
