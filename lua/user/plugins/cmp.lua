@@ -28,6 +28,12 @@ return { -- Autocompletion
         },
       },
       opts = {},
+      config = function()
+        -- Defer emoji snippet loading to speed up startup
+        vim.defer_fn(function()
+          require("snippets.emoji")
+        end, 100)
+      end,
     },
     "folke/lazydev.nvim",
   },
@@ -64,7 +70,10 @@ return { -- Autocompletion
       ["<C-j>"] = { "select_next", "fallback" },
       ["<C-p>"] = { "select_prev", "fallback" },
       ["<C-n>"] = { "select_next", "fallback" },
-      ["<Tab>"] = { "accept", "fallback" },
+      ["<S-Tab>"] = { "select_prev", "fallback" },
+      ["<Tab>"] = { "select_next", "fallback" },
+      ["<CR>"] = { "accept", "fallback" },
+      ["<C-y>"] = { "accept", "fallback" },
       ["<S-k>"] = { "scroll_documentation_up", "fallback" },
       ["<S-j>"] = { "scroll_documentation_down", "fallback" },
       ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
@@ -84,6 +93,7 @@ return { -- Autocompletion
       -- By default, you may press `<c-space>` to show the documentation.
       -- Optionally, set `auto_show = true` to show the documentation after a delay.
       documentation = { auto_show = false, auto_show_delay_ms = 500 },
+      list = { selection = { preselect = false, auto_insert = false } },
     },
 
     sources = {
@@ -92,7 +102,8 @@ return { -- Autocompletion
         lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
         path = {
           enabled = function()
-            return vim.bo.filetype ~= "copilot-chat"
+            local ft = vim.bo.filetype
+            return ft ~= "copilot-chat" and ft ~= "codecompanion"
           end,
         },
       },

@@ -1,8 +1,6 @@
 return {
   "LunarVim/breadcrumbs.nvim",
-  config = function()
-    require("breadcrumbs").setup()
-  end,
+  opts = {}, -- Auto-calls setup with empty opts
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`

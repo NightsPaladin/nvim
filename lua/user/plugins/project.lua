@@ -1,22 +1,32 @@
 return {
   "ahmedkhalf/project.nvim",
-  event = "VeryLazy",
-  dependencies = {
-    "nvim-telescope/telescope.nvim",
+  opts = {
+    manual_mode = true, -- Don't auto-detect, only change on command
+    detection_methods = { "pattern" },
+    patterns = { ".git", "Makefile", "package.json", "go.mod", "Cargo.toml" },
+
+    -- Don't automatically change directory
+    silent_chdir = false,
+
+    -- Show a message when changing project
+    show_hidden = false,
   },
 
-  config = function()
-    require("project_nvim").setup({
-      manual_mode = true,
-      detection_methods = { "lsp", "pattern" },
-      patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json", "pom.xml" },
-      ignore_lsp = { "terraform_ls" },
-      exclude_dirs = {},
-      show_hidden = false,
-      silent_chdir = true,
-      scope_chdir = "global",
-    })
+  keys = {
+    { "<leader>pr", "<cmd>ProjectRoot<cr>", desc = "Go to [P]roject [R]oot" },
+    -- Optional: if you use telescope, uncomment this for project picker
+    { "<leader>pp", "<cmd>Telescope projects<cr>", desc = "[P]ick [P]roject" },
+  },
 
-    vim.keymap.set("n", "<leader>fp", require("telescope").extensions.projects.projects, { desc = "[F]ind [P]roject" })
+  config = function(_, opts)
+    require("project_nvim").setup(opts)
+
+    -- Optional: integrate with telescope if available
+    pcall(function()
+      require("telescope").load_extension("projects")
+    end)
   end,
 }
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et

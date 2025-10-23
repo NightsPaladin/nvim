@@ -1,6 +1,7 @@
 -- lua/plugins/ai.lua
 -- AI Integration for Neovim with blink.cmp
--- Inspired by LazyVim's approach but kept minimal for Kickstart.nvim
+-- Uses CodeCompanion with GitHub Copilot as primary AI (no API keys needed!)
+-- CopilotChat.nvim available as alternative (commented out)
 -- Place this file in your lua/plugins/ directory
 
 return {
@@ -15,7 +16,7 @@ return {
     event = "InsertEnter",
     opts = {
       suggestion = {
-        enabled = true,
+        enabled = false,
         auto_trigger = true,
         -- Hide ghost text when blink.cmp menu is open
         hide_during_completion = true,
@@ -37,98 +38,104 @@ return {
           -- prev = "<M-[>",
         },
       },
-      panel = { enabled = false }, -- Use CopilotChat instead
+      panel = { enabled = false }, -- Use CodeCompanion/CopilotChat instead
       filetypes = {
-        yaml = true,
-        markdown = true,
+        ["*"] = true, -- Enable for all filetypes
+
+        -- Only disable special buffers
         help = false,
-        gitcommit = true,
         gitrebase = false,
+        [""] = false,
         ["."] = false,
+        TelescopePrompt = false,
+        NvimTree = false,
+        ["neo-tree"] = false,
+        Trouble = false,
+        lazy = false,
+        mason = false,
+        ["copilot-chat"] = false,
+        ["codecompanion"] = false,
+      },
+    },
+    keys = {
+      {
+        "<leader>ta",
+        "<cmd>Copilot toggle<CR>",
+        -- function()
+        --   require("copilot.suggestion").toggle_auto_trigger()
+        -- end,
+        desc = "[T]oggle [A]I (Copilot)",
       },
     },
   },
 
-  -- CopilotChat - Conversational AI Interface
+  -- ============================================================================
+  -- CodeCompanion (Multi-Provider AI) - PRIMARY CHAT INTERFACE
+  -- ============================================================================
+  -- Default: Uses your GitHub Copilot subscription (no API keys needed!)
+  -- Includes access to GPT-4, Claude 3.5 Sonnet, and o1 models
+  -- Optional: Can configure direct API access (see documentation below)
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
+    "olimorris/codecompanion.nvim",
     dependencies = {
-      { "zbirenbaum/copilot.lua" },
-      { "nvim-lua/plenary.nvim" },
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
     },
-    build = "make tiktoken",
-    cmd = "CopilotChat",
-    opts = function()
-      local user = vim.env.USER or "User"
-      user = user:sub(1, 1):upper() .. user:sub(2)
-
-      return {
-        model = "gpt-4o", -- 'claude-3.5-sonnet', -- or 'gpt-4o', 'gemini-2.0-flash-exp'
-        auto_insert_mode = true,
-        show_help = true,
-        question_header = "  " .. user .. " ",
-        answer_header = "  Copilot ",
-        window = {
-          layout = "vertical",
-          width = 0.4,
-          height = 1,
-          border = "none",
-        },
-        prompts = {
-          Explain = {
-            prompt = "/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.",
-          },
-          Review = {
-            prompt = "/COPILOT_REVIEW Review the selected code.",
-          },
-          Fix = {
-            prompt = "/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed.",
-          },
-          Optimize = {
-            prompt = "/COPILOT_GENERATE Optimize the selected code to improve performance and readability.",
-          },
-          Docs = {
-            prompt = "/COPILOT_GENERATE Please add documentation comments to the selected code.",
-          },
-          Tests = {
-            prompt = "/COPILOT_GENERATE Please generate tests for my code.",
-          },
-          FixDiagnostic = {
-            prompt = "Please assist with the following diagnostic issue in file:",
-            selection = require("CopilotChat.select").diagnostics,
-          },
-          Commit = {
-            prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
-            selection = require("CopilotChat.select").gitdiff,
-          },
-          CommitStaged = {
-            prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
-            selection = function(source)
-              return require("CopilotChat.select").gitdiff(source, true)
-            end,
+    cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
+    opts = {
+      -- Note: Default adapter is "copilot" - uses your existing GitHub Copilot subscription!
+      -- No API keys needed - it uses the token from copilot.lua authentication
+      strategies = {
+        chat = {
+          adapter = "copilot",
+          -- Use snacks picker for slash commands to avoid conflicts with Telescope
+          slash_commands = {
+            ["file"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+            ["buffer"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+            ["help"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
+            ["symbols"] = {
+              opts = {
+                provider = "snacks",
+              },
+            },
           },
         },
-      }
-    end,
+        inline = { adapter = "copilot" },
+      },
+      display = {
+        chat = {
+          window = {
+            layout = "vertical",
+            width = 0.4,
+            height = 1,
+          },
+        },
+      },
+    },
     keys = {
-      -- Submit prompt in chat (works in insert mode!)
-      { "<C-CR>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
-
-      -- Quick chat
+      -- Main chat interface
       {
         "<leader>aa",
-        function()
-          require("CopilotChat").toggle()
-        end,
-        desc = "Toggle (CopilotChat)",
+        "<cmd>CodeCompanionChat Toggle<CR>",
+        desc = "Toggle Chat (CodeCompanion)",
         mode = { "n", "v" },
       },
       {
         "<leader>ax",
-        function()
-          require("CopilotChat").reset()
-        end,
-        desc = "Clear (CopilotChat)",
+        "<cmd>CodeCompanionChat Add<CR>",
+        desc = "Add to Chat (CodeCompanion)",
         mode = { "n", "v" },
       },
       {
@@ -136,42 +143,261 @@ return {
         function()
           local input = vim.fn.input("Quick Chat: ")
           if input ~= "" then
-            require("CopilotChat").ask(input)
+            vim.cmd("CodeCompanionChat " .. input)
           end
         end,
-        desc = "Quick Chat (CopilotChat)",
+        desc = "Quick Chat (CodeCompanion)",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>am",
+        "<cmd>CodeCompanionChat Adapter<CR>",
+        desc = "Select Model (CodeCompanion)",
         mode = { "n", "v" },
       },
 
-      -- Code actions
-      { "<leader>ae", ":CopilotChatExplain<CR>", desc = "Explain Code", mode = "v" },
-      { "<leader>ar", ":CopilotChatReview<CR>", desc = "Review Code", mode = "v" },
-      { "<leader>af", ":CopilotChatFix<CR>", desc = "Fix Code", mode = "v" },
-      { "<leader>ao", ":CopilotChatOptimize<CR>", desc = "Optimize Code", mode = "v" },
-      { "<leader>ad", ":CopilotChatDocs<CR>", desc = "Add Documentation", mode = "v" },
-      { "<leader>at", ":CopilotChatTests<CR>", desc = "Generate Tests", mode = "v" },
+      -- Actions menu (gives access to predefined prompts)
+      {
+        "<leader>aC",
+        "<cmd>CodeCompanionActions<CR>",
+        desc = "Actions Menu (CodeCompanion)",
+        mode = { "n", "v" },
+      },
 
-      -- Fix diagnostic
-      { "<leader>aD", ":CopilotChatFixDiagnostic<CR>", desc = "Fix Diagnostic" },
+      -- Inline assistant
+      {
+        "<leader>aI",
+        "<cmd>CodeCompanion<CR>",
+        desc = "Inline Assistant (CodeCompanion)",
+        mode = "v",
+      },
+
+      -- Code actions (visual mode)
+      {
+        "<leader>ae",
+        "<cmd>CodeCompanionActions explain<CR>",
+        desc = "Explain Code",
+        mode = "v",
+      },
+      {
+        "<leader>ar",
+        "<cmd>CodeCompanionActions review<CR>",
+        desc = "Review Code",
+        mode = "v",
+      },
+      {
+        "<leader>af",
+        "<cmd>CodeCompanionActions fix<CR>",
+        desc = "Fix Code",
+        mode = "v",
+      },
+      {
+        "<leader>ao",
+        "<cmd>CodeCompanionActions optimize<CR>",
+        desc = "Optimize Code",
+        mode = "v",
+      },
+      {
+        "<leader>ad",
+        "<cmd>CodeCompanionActions docs<CR>",
+        desc = "Add Documentation",
+        mode = "v",
+      },
+      {
+        "<leader>at",
+        "<cmd>CodeCompanionActions tests<CR>",
+        desc = "Generate Tests",
+        mode = "v",
+      },
 
       -- Git integration
-      { "<leader>ac", ":CopilotChatCommit<CR>", desc = "Generate Commit Message" },
-      { "<leader>as", ":CopilotChatCommitStaged<CR>", desc = "Generate Commit Message (Staged)" },
+      {
+        "<leader>ac",
+        "<cmd>CodeCompanionActions commit<CR>",
+        desc = "Generate Commit Message",
+      },
     },
     config = function(_, opts)
-      local chat = require("CopilotChat")
-      chat.setup(opts)
+      require("codecompanion").setup(opts)
 
-      -- Auto-insert mode for chat buffer
-      vim.api.nvim_create_autocmd("BufEnter", {
-        pattern = "copilot-chat",
+      -- Auto-insert mode for chat buffer + register keybindings
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "codecompanion",
         callback = function()
           vim.opt_local.relativenumber = false
           vim.opt_local.number = false
+
+          -- Explicitly register CodeCompanion keybindings with which-key
+          local ok, wk = pcall(require, "which-key")
+          if ok then
+            wk.add({
+              -- Adapter & Config
+              { "ga", desc = "Change adapter", buffer = 0 },
+              { "gs", desc = "Toggle system prompt", buffer = 0 },
+              { "gS", desc = "Show usage stats", buffer = 0 },
+
+              -- Code Blocks
+              { "gy", desc = "Yank codeblock", buffer = 0 },
+              { "gc", desc = "Insert codeblock", buffer = 0 },
+              { "gf", desc = "Fold codeblocks", buffer = 0 },
+
+              -- Context Management
+              { "gp", desc = "Pin context", buffer = 0 },
+              { "gw", desc = "Watch buffer", buffer = 0 },
+
+              -- Debug & Advanced
+              { "gd", desc = "Debug view", buffer = 0 },
+              { "gD", desc = "Super Diff", buffer = 0 },
+              { "gr", desc = "Regenerate", buffer = 0 },
+              { "gR", desc = "Go to file", buffer = 0 },
+              { "gx", desc = "Clear chat", buffer = 0 },
+              { "gM", desc = "Clear memory", buffer = 0 },
+
+              -- Tools
+              { "gt", group = "Tools", buffer = 0 },
+              { "gta", desc = "Toggle auto tools", buffer = 0 },
+            })
+          end
         end,
       })
     end,
   },
+
+  -- ============================================================================
+  -- ALTERNATIVE: CopilotChat (GitHub Copilot Chat)
+  -- ============================================================================
+  -- Uncomment to use GitHub Copilot's chat instead of CodeCompanion
+  -- Note: Uses Claude 3.5 Sonnet via GitHub Copilot subscription
+  -- {
+  --   "CopilotC-Nvim/CopilotChat.nvim",
+  --   dependencies = {
+  --     { "zbirenbaum/copilot.lua" },
+  --     { "nvim-lua/plenary.nvim" },
+  --   },
+  --   build = "make tiktoken",
+  --   cmd = "CopilotChat",
+  --   opts = function()
+  --     local user = vim.env.USER or "User"
+  --     user = user:sub(1, 1):upper() .. user:sub(2)
+  --
+  --     return {
+  --       model = "gpt-4o", -- 'claude-3.5-sonnet', -- or 'gpt-4o', 'gemini-2.0-flash-exp'
+  --       auto_insert_mode = true,
+  --       show_help = true,
+  --       question_header = "  " .. user .. " ",
+  --       answer_header = "  Copilot ",
+  --       window = {
+  --         layout = "vertical",
+  --         width = 0.4,
+  --         height = 1,
+  --         border = "none",
+  --       },
+  --       prompts = {
+  --         Explain = {
+  --           prompt = "/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.",
+  --         },
+  --         Review = {
+  --           prompt = "/COPILOT_REVIEW Review the selected code.",
+  --         },
+  --         Fix = {
+  --           prompt = "/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed.",
+  --         },
+  --         Optimize = {
+  --           prompt = "/COPILOT_GENERATE Optimize the selected code to improve performance and readability.",
+  --         },
+  --         Docs = {
+  --           prompt = "/COPILOT_GENERATE Please add documentation comments to the selected code.",
+  --         },
+  --         Tests = {
+  --           prompt = "/COPILOT_GENERATE Please generate tests for my code.",
+  --         },
+  --         FixDiagnostic = {
+  --           prompt = "Please assist with the following diagnostic issue in file:",
+  --           selection = require("CopilotChat.select").diagnostics,
+  --         },
+  --         Commit = {
+  --           prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
+  --           selection = require("CopilotChat.select").gitdiff,
+  --         },
+  --         CommitStaged = {
+  --           prompt = "Write commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
+  --           selection = function(source)
+  --             return require("CopilotChat.select").gitdiff(source, true)
+  --           end,
+  --         },
+  --       },
+  --     }
+  --   end,
+  --   keys = {
+  --     -- NOTE: <C-l> binding removed to avoid conflict with window navigation (Ctrl+w l)
+  --     -- Use <leader>ax to clear/reset the chat instead
+  --
+  --     -- Quick chat
+  --     {
+  --       "<leader>aa",
+  --       function()
+  --         require("CopilotChat").toggle()
+  --       end,
+  --       desc = "Toggle (CopilotChat)",
+  --       mode = { "n", "v" },
+  --     },
+  --     {
+  --       "<leader>ax",
+  --       function()
+  --         require("CopilotChat").reset()
+  --       end,
+  --       desc = "Clear (CopilotChat)",
+  --       mode = { "n", "v" },
+  --     },
+  --     {
+  --       "<leader>aq",
+  --       function()
+  --         local input = vim.fn.input("Quick Chat: ")
+  --         if input ~= "" then
+  --           require("CopilotChat").ask(input)
+  --         end
+  --       end,
+  --       desc = "Quick Chat (CopilotChat)",
+  --       mode = { "n", "v" },
+  --     },
+  --     {
+  --       "<leader>am",
+  --       function ()
+  --         require("CopilotChat").select_model()
+  --       end,
+  --       desc = "Select Model (CopilotChat)",
+  --       mode = { "n", "v" },
+  --     },
+  --
+  --     -- Code actions
+  --     { "<leader>ae", ":CopilotChatExplain<CR>", desc = "Explain Code", mode = "v" },
+  --     { "<leader>ar", ":CopilotChatReview<CR>", desc = "Review Code", mode = "v" },
+  --     { "<leader>af", ":CopilotChatFix<CR>", desc = "Fix Code", mode = "v" },
+  --     { "<leader>ao", ":CopilotChatOptimize<CR>", desc = "Optimize Code", mode = "v" },
+  --     { "<leader>ad", ":CopilotChatDocs<CR>", desc = "Add Documentation", mode = "v" },
+  --     { "<leader>at", ":CopilotChatTests<CR>", desc = "Generate Tests", mode = "v" },
+  --
+  --     -- Fix diagnostic
+  --     { "<leader>aD", ":CopilotChatFixDiagnostic<CR>", desc = "Fix Diagnostic" },
+  --
+  --     -- Git integration
+  --     { "<leader>ac", ":CopilotChatCommit<CR>", desc = "Generate Commit Message" },
+  --     { "<leader>as", ":CopilotChatCommitStaged<CR>", desc = "Generate Commit Message (Staged)" },
+  --   },
+  --   config = function(_, opts)
+  --     local chat = require("CopilotChat")
+  --     chat.setup(opts)
+  --
+  --     -- Auto-insert mode for chat buffer
+  --     vim.api.nvim_create_autocmd("BufEnter", {
+  --       pattern = "copilot-chat",
+  --       callback = function()
+  --         vim.opt_local.relativenumber = false
+  --         vim.opt_local.number = false
+  --       end,
+  --     })
+  --   end,
+  -- },
 
   -- ============================================================================
   -- OPTIONAL: Copilot in Completion Menu
@@ -198,54 +424,6 @@ return {
   -- See documentation at the end of this file for details.
 
   -- ============================================================================
-  -- ALTERNATIVE: CodeCompanion (Multi-Provider AI)
-  -- ============================================================================
-  -- Uncomment to use Claude, OpenAI, Gemini, or Ollama
-  -- Can be used alongside Copilot without conflicts
-  -- Uses UPPERCASE second letter (<Space>aA, <Space>aC, etc.) to differentiate from Copilot
-  -- {
-  --   "olimorris/codecompanion.nvim",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --   },
-  --   cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
-  --   opts = {
-  --     adapters = {
-  --       anthropic = function()
-  --         return require("codecompanion.adapters").extend("anthropic", {
-  --           env = { api_key = "ANTHROPIC_API_KEY" },
-  --           schema = { model = { default = "claude-sonnet-4-5-20250929" } },
-  --         })
-  --       end,
-  --       openai = function()
-  --         return require("codecompanion.adapters").extend("openai", {
-  --           env = { api_key = "OPENAI_API_KEY" },
-  --           schema = { model = { default = "gpt-4o" } },
-  --         })
-  --       end,
-  --       gemini = function()
-  --         return require("codecompanion.adapters").extend("gemini", {
-  --           env = { api_key = "GEMINI_API_KEY" },
-  --           schema = { model = { default = "gemini-2.0-flash-exp" } },
-  --         })
-  --       end,
-  --     },
-  --     strategies = {
-  --       chat = { adapter = "anthropic" },
-  --       inline = { adapter = "anthropic" },
-  --     },
-  --   },
-  --   keys = {
-  --     -- Using UPPERCASE second letter to differentiate from Copilot (lowercase)
-  --     -- All under <leader>a prefix
-  --     { "<leader>aA", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat (CodeCompanion)", mode = { "n", "v" } },
-  --     { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions (CodeCompanion)", mode = { "n", "v" } },
-  --     { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant (CodeCompanion)", mode = "v" },
-  --   },
-  -- },
-
-  -- ============================================================================
   -- BONUS: Codeium (Free Copilot Alternative)
   -- ============================================================================
   -- {
@@ -268,14 +446,14 @@ return {
 -- ## File Organization Summary
 --
 -- **This file (ai.lua):**
--- - ✅ copilot.lua (AI suggestions)
--- - ✅ CopilotChat.nvim (AI chat)
+-- - ✅ copilot.lua (AI suggestions via ghost text)
+-- - ✅ CodeCompanion (Primary AI chat - uses GitHub Copilot by default!)
+-- - ✅ CopilotChat.nvim (Alternative, commented out)
 -- - ✅ blink-copilot (optional, commented out)
--- - ✅ CodeCompanion (optional, commented out)
 --
 -- **Your cmp.lua file:**
 -- - ✅ blink.cmp main configuration
--- - ✅ Path provider fix (add this!)
+-- - ✅ Path provider fix (recommended for chat buffers)
 -- - ✅ Copilot source (only if using menu mode)
 --
 -- This keeps each plugin's config in ONE place!
@@ -285,21 +463,94 @@ return {
 --
 -- 1. Save this file to: `~/.config/nvim/lua/plugins/ai.lua`
 --
--- 2. **Add to your cmp.lua** (see "cmp.lua Configuration" section below)
+-- 2. Restart Neovim - lazy.nvim will auto-install plugins
 --
--- 3. Restart Neovim - lazy.nvim will auto-install plugins
---
--- 4. Authenticate Copilot:
+-- 3. Authenticate Copilot (if not already done):
 --    - In Neovim, run: `:Copilot auth`
 --    - Follow the browser prompts
 --
--- 5. Start using AI:
---    - Type code and see ghost text suggestions
---    - Press Ctrl+g to accept suggestions (works on macOS!)
---    - Press <Space>aa to open chat
+-- 4. Start using AI:
+--    - Type code and see ghost text suggestions (Copilot)
+--    - Press Ctrl+g to accept suggestions
+--    - Press <Space>aa to open CodeCompanion chat (uses GitHub Copilot!)
+--    - Press <Space>aC for actions menu
+--    - Press `ga` in chat to switch between GPT-4, Claude 3.5, and o1 models
+--
+-- **That's it!** CodeCompanion uses your GitHub Copilot subscription by default.
+-- No separate API keys needed!
 --
 -- **Note:** Keybindings use Ctrl instead of Alt/Option by default for macOS compatibility.
 -- See "macOS Terminal Configuration" section below for details.
+--
+--
+-- ## Using Other AI Providers (Optional)
+--
+-- Want to use Claude 4.5, OpenAI, or Gemini directly via API?
+-- See "Adding Direct API Access" section below for instructions.
+--
+--
+-- ## Adding Direct API Access (Optional)
+--
+-- **By default, CodeCompanion uses GitHub Copilot - no API keys needed!**
+--
+-- If you want to use other providers directly (Claude 4.5, OpenAI, Gemini), you'll need:
+-- 1. API keys for those providers (separate from consumer subscriptions like Claude Pro)
+-- 2. To configure the adapters and environment variables
+--
+-- ### Step 1: Get API Keys
+--
+-- **Important:** Consumer subscriptions (Claude Pro, ChatGPT Plus) don't include API access.
+-- You need separate API accounts:
+-- - Anthropic API: https://console.anthropic.com/ (separate from Claude Pro)
+-- - OpenAI API: https://platform.openai.com/api-keys (separate from ChatGPT Plus)
+-- - Google Gemini: https://makersuite.google.com/app/apikey
+--
+-- ### Step 2: Set Environment Variables
+--
+-- Add to ~/.bashrc or ~/.zshrc:
+--
+-- ```bash
+-- # Only needed if using direct API access (not for GitHub Copilot)
+-- export ANTHROPIC_API_KEY="sk-ant-xxxxx"
+-- export OPENAI_API_KEY="sk-xxxxx"
+-- export GEMINI_API_KEY="xxxxx"
+-- ```
+--
+-- After adding, run: `source ~/.bashrc` (or restart terminal)
+--
+-- ### Step 3: Update Config
+--
+-- Add this to the `opts` section of CodeCompanion (around line 82):
+--
+-- ```lua
+-- opts = {
+--   adapters = {
+--     anthropic = function()
+--       return require("codecompanion.adapters").extend("anthropic", {
+--         env = { api_key = "ANTHROPIC_API_KEY" },
+--         schema = { model = { default = "claude-sonnet-4-5-20250929" } },
+--       })
+--     end,
+--     openai = function()
+--       return require("codecompanion.adapters").extend("openai", {
+--         env = { api_key = "OPENAI_API_KEY" },
+--         schema = { model = { default = "gpt-4o" } },
+--       })
+--     end,
+--     gemini = function()
+--       return require("codecompanion.adapters").extend("gemini", {
+--         env = { api_key = "GEMINI_API_KEY" },
+--         schema = { model = { default = "gemini-2.0-flash-exp" } },
+--       })
+--     end,
+--   },
+--   strategies = {
+--     chat = { adapter = "anthropic" },  -- Change default from "copilot"
+--     inline = { adapter = "anthropic" },
+--   },
+--   -- ... rest of config
+-- }
+-- ```
 --
 --
 -- ## cmp.lua Configuration
@@ -317,11 +568,11 @@ return {
 --       providers = {
 --         -- Your existing provider config...
 --
---         -- REQUIRED: Fixes CopilotChat "/" commands
---         -- This prevents path completion from interfering with chat commands
+--         -- RECOMMENDED: Prevents path completion in chat buffers
 --         path = {
 --           enabled = function()
---             return vim.bo.filetype ~= "copilot-chat"
+--             local ft = vim.bo.filetype
+--             return ft ~= "copilot-chat" and ft ~= "codecompanion"
 --           end,
 --         },
 --
@@ -354,76 +605,79 @@ return {
 --
 -- ```
 -- ┌─────────────────────────────────────────────────────────┐
--- │ All under <leader>a prefix                              │
--- │ Second letter: lowercase = Copilot, UPPERCASE = CodeC.  │
+-- │ All under <leader>a prefix (default: <Space>a)          │
 -- ├─────────────────────────────────────────────────────────┤
--- │ <Space>aa - Copilot Chat                                │
--- │ <Space>aA - CodeCompanion Chat                          │
+-- │ CHAT & GENERAL                                           │
+-- │ <Space>aa - Toggle CodeCompanion chat                    │
+-- │ <Space>ax - Add selection to chat                        │
+-- │ <Space>aq - Quick question                               │
+-- │ <Space>am - Select model/adapter                         │
+-- │ <Space>aC - Actions menu (predefined prompts)            │
 -- │                                                          │
--- │ <Space>ax - Clear Copilot chat                          │
--- │ <Space>aq - Quick question (Copilot)                    │
--- │ <Space>ap - Prompt actions (Copilot)                    │
+-- │ VISUAL MODE (select code first)                         │
+-- │ <Space>ae - Explain code                                 │
+-- │ <Space>ar - Review code                                  │
+-- │ <Space>af - Fix code                                     │
+-- │ <Space>ao - Optimize code                                │
+-- │ <Space>ad - Add documentation                            │
+-- │ <Space>at - Generate tests                               │
+-- │ <Space>aI - Inline assistant (custom prompt)            │
 -- │                                                          │
--- │ <Space>aC - CodeCompanion Actions                       │
--- │ <Space>aI - CodeCompanion Inline (visual)               │
+-- │ GIT                                                      │
+-- │ <Space>ac - Generate commit message                      │
 -- │                                                          │
--- │ Visual mode (works with active chat):                   │
--- │ <Space>ae - Explain                                     │
--- │ <Space>ar - Review                                      │
--- │ <Space>af - Fix                                         │
--- │ <Space>ao - Optimize                                    │
--- │ <Space>ad - Document                                    │
--- │ <Space>at - Tests                                       │
+-- │ INSERT MODE (ghost text suggestions)                    │
+-- │ Ctrl+g - Accept suggestion                               │
+-- │ Ctrl+] - Next suggestion                                 │
+-- │ Ctrl+[ - Previous suggestion                             │
 -- │                                                          │
--- │ Other:                                                  │
--- │ <Space>aD - Fix diagnostic                              │
--- │ <Space>ac - Commit message                              │
--- │ <Space>as - Commit staged (note: 's' not 'C')          │
+-- │ OTHER                                                    │
+-- │ <Space>ta - Toggle AI suggestions on/off                │
 -- └─────────────────────────────────────────────────────────┘
 -- ```
 --
--- **Pattern:** `<Space>a` + lowercase = Copilot, UPPERCASE = CodeCompanion
--- Everything stays under the `<Space>a` AI prefix!
--- Your existing `<Space>c` prefix remains free for code actions!
+-- **Note on Keybinding Scope:**
+-- - Leader key mappings (<Space>a*) are global
+-- - CodeCompanion chat buffer has many buffer-local keybindings that ONLY work inside the chat
+-- - These won't interfere with your other global shortcuts!
 --
 --
-
--- ### Copilot Suggestions (Insert Mode)
--- - `Ctrl+g` - Accept full suggestion
--- - `Ctrl+]` - Next suggestion
--- - `Ctrl+[` - Previous suggestion
--- - `Ctrl+e` - Dismiss suggestion
+-- ## CodeCompanion Chat Buffer Keybindings
 --
--- ### CopilotChat (Primary AI - lowercase second letter)
--- - `<Space>aa` - Toggle Copilot chat
--- - `<Space>ax` - Clear chat
--- - `<Space>aq` - Quick question
--- - `<Space>ap` - Show prompt actions
--- - `Ctrl+Enter` - Submit message (works in insert mode!)
+-- **IMPORTANT:** Press `?` in the chat buffer to see all available keybindings!
 --
--- **Visual Mode (select code first):**
--- - `<Space>ae` - Explain code
--- - `<Space>ar` - Review code
--- - `<Space>af` - Fix code
--- - `<Space>ao` - Optimize code
--- - `<Space>ad` - Add docs
--- - `<Space>at` - Generate tests
+-- These keybindings are **buffer-local** (only active in CodeCompanion chat):
 --
--- **Other:**
--- - `<Space>aD` - Fix diagnostic error
--- - `<Space>ac` - Generate commit message
--- - `<Space>as` - Generate commit (staged)
+-- **Sending & Control:**
+-- - `<CR>` (Enter in normal) - Send message
+-- - `<C-s>` (Ctrl-s in insert) - Send message
+-- - `q` - Stop current request
+-- - `<C-c>` - Close chat buffer
 --
--- ### CodeCompanion (Alternative AI - UPPERCASE second letter, if enabled)
--- - `<Space>aA` - Toggle CodeCompanion chat (uses your API key)
--- - `<Space>aC` - CodeCompanion actions menu
--- - `<Space>aI` - Inline assistant (visual mode)
+-- **Navigation:**
+-- - `]]` / `[[` - Next/previous message header
+-- - `}` / `{` - Next/previous chat
 --
--- **Key Organization:**
--- - `<Space>a` + lowercase = Copilot (GitHub subscription, Claude 3.5)
--- - `<Space>a` + UPPERCASE = CodeCompanion (direct API, Claude 4.5)
--- - Everything under the same `<Space>a` prefix!
+-- **Adapter & Model:**
+-- - `ga` - Change adapter (switch between Claude, GPT, etc.)
+-- - `gs` - Toggle system prompt
+-- - `gS` - Show usage stats
 --
+-- **Code & Context:**
+-- - `gy` - Yank last codeblock
+-- - `gc` - Insert codeblock
+-- - `gf` - Fold codeblocks
+-- - `gp` - Pin context (file/buffer stays updated)
+-- - `gw` - Watch buffer (track changes only)
+--
+-- **Debug & Advanced:**
+-- - `gd` - Debug view (see full message history)
+-- - `gD` - Super Diff (view all file changes)
+-- - `gr` - Regenerate last response
+-- - `gR` - Go to file under cursor
+-- - `gx` - Clear chat contents
+-- - `gM` - Clear memory
+-- - `gta` - Toggle auto tool mode
 --
 --
 -- ## Integration Modes
@@ -441,120 +695,41 @@ return {
 -- - **Setup:** Follow "cmp.lua Configuration" section above
 --
 --
--- ## Required cmp.lua Changes
+-- ## Switching Between Chat Providers
 --
--- **Minimal (Required for CopilotChat):**
--- ```lua
--- -- In your cmp.lua providers section:
--- path = {
---   enabled = function()
---     return vim.bo.filetype ~= "copilot-chat"
---   end,
--- },
--- ```
+-- **Current Setup:**
+-- - Primary: GitHub Copilot (default - uses your subscription!)
+-- - Alternative: CopilotChat (commented out)
+-- - Optional: Direct API access (Anthropic, OpenAI, Gemini) - see above
 --
--- **Full (If using Copilot in menu):**
--- ```lua
--- -- In your cmp.lua:
--- sources = {
---   default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' },
---   providers = {
---     path = {
---       enabled = function()
---         return vim.bo.filetype ~= "copilot-chat"
---       end,
---     },
---     copilot = {
---       name = "copilot",
---       module = "blink-copilot",
---       score_offset = 100,
---       async = true,
---     },
---   },
--- },
--- ```
+-- **To switch to CopilotChat:**
+-- 1. Comment out the CodeCompanion plugin block (lines ~75-115)
+-- 2. Uncomment the CopilotChat plugin block (lines ~225-365)
+-- 3. Restart Neovim
 --
+-- **To use direct API providers:**
+-- 1. See "Adding Direct API Access" section above
+-- 2. Configure adapters and set environment variables
+-- 3. Change the `adapter` in strategies from "copilot" to your preferred provider
 --
--- ## Multi-Provider Setup
+-- **GitHub Copilot Models Available:**
+-- Through your GitHub Copilot subscription, you get access to:
+-- - GPT-4 and GPT-4o
+-- - Claude 3.5 Sonnet
+-- - o1-preview and o1-mini
 --
--- You can enable multiple AI providers side-by-side:
--- 1. **Copilot** (lowercase) - Uses your GitHub Copilot subscription
--- 2. **CodeCompanion** (UPPERCASE) - Uses your direct API keys
+-- Switch models in chat by pressing `ga` and selecting from the list!
 --
--- ### Clean Keybinding Organization
--- ```
--- <Space>a + lowercase letter:
---   <Space>aa - Copilot chat
---   <Space>ae - Explain
---   <Space>ar - Review
---   <Space>af - Fix
---   ... etc
+-- **Why use direct API access?**
+-- - Access to Claude Sonnet 4.5 (latest and most capable)
+-- - More control over model parameters
+-- - Higher rate limits for heavy usage
 --
--- <Space>a + UPPERCASE letter:
---   <Space>aA - CodeCompanion chat
---   <Space>aC - CodeCompanion actions
---   <Space>aI - CodeCompanion inline
--- ```
---
--- **No conflicts!** Same prefix, different case for second letter.
--- Think of it as: regular = Copilot, shift second key = CodeCompanion
---
--- ### Why Use Both?
--- - **Copilot**: Included with your subscription, Claude 3.5 Sonnet
--- - **CodeCompanion**: Direct API access, Claude Sonnet 4.5 (latest model!)
--- - Switch between models based on the task
--- - Both can be open simultaneously
---
---
--- ## LazyVim-Inspired Features
---
--- This config incorporates LazyVim best practices:
--- - ✅ Smart ghost text that hides during completion
--- - ✅ Path completion disabled in CopilotChat buffers
--- - ✅ Proper event lazy-loading
--- - ✅ Non-conflicting keybindings
--- - ✅ Auto-insert mode for chat
--- - ✅ Commit message generation
--- - ✅ Diagnostic fixing
---
--- But kept minimal - no extra dependencies beyond essentials!
---
---
--- ## Environment Variables (for CodeCompanion)
---
--- Add to ~/.bashrc or ~/.zshrc:
---
--- ```bash
--- export ANTHROPIC_API_KEY="sk-ant-xxxxx"
--- export OPENAI_API_KEY="sk-xxxxx"
--- export GEMINI_API_KEY="xxxxx"
--- ```
---
---
--- ## Optional Integrations
---
--- **Lualine Status** (add to your lualine config):
--- ```lua
--- sections = {
---   lualine_x = {
---     {
---       function()
---         local icon = " "
---         if package.loaded["copilot"] then
---           local status = require("copilot.api").status.data.status
---           if status == "InProgress" then return icon .. "..." end
---           if status == "Warning" then return icon .. "!" end
---           return icon
---         end
---         return ""
---       end,
---     },
---   },
--- }
--- ```
---
--- **Telescope Integration** (for CopilotChat prompts):
--- Already included in keybinds! Press `<Space>ap` to search prompts
+-- **Why stick with Copilot?**
+-- - Included with your GitHub Copilot subscription
+-- - No separate API keys or billing needed
+-- - Multiple models available (GPT-4, Claude 3.5, o1)
+-- - Simpler setup
 --
 --
 -- ## Troubleshooting
@@ -563,17 +738,33 @@ return {
 -- - Run `:Copilot status` to check connection
 -- - Run `:Copilot auth` to re-authenticate
 --
+-- **CodeCompanion chat not working:**
+-- - Make sure Copilot is authenticated: `:Copilot status`
+-- - If showing "No token found", run `:Copilot auth` first
+-- - Check available models with `ga` in the chat buffer
+--
+-- **Want to use direct API access (Claude 4.5, etc.):**
+-- - See "Adding Direct API Access" section above
+-- - Check environment variables: `:echo $ANTHROPIC_API_KEY`
+-- - Verify API key is valid on provider's website
+--
 -- **Ghost text conflicts:**
 -- - Already handled! `hide_during_completion = true`
--- - Autocmds hide ghost text when blink menu opens
+-- - Copilot disabled in special buffers
 --
 -- **Path completion in chat:**
--- - Already fixed! Path provider disabled in copilot-chat buffers
+-- - Update cmp.lua to disable path provider in codecompanion buffers
+-- - See "cmp.lua Configuration" section above
 --
 -- **Want Tab to accept:**
 -- - Change `accept = "<Tab>"` in copilot.lua opts
 -- - Note: May conflict with blink.cmp and snippet jumping
 -- - Consider using a leader-based mapping instead
+--
+-- **Ctrl+l not working for window navigation:**
+-- - This config intentionally disables <C-l> in CopilotChat (when enabled)
+-- - Use <leader>ax to reset/clear chat instead
+-- - Your Ctrl+w l for window navigation should work normally
 --
 --
 -- ## macOS Terminal Configuration
@@ -641,13 +832,38 @@ return {
 -- 4. Keep Right Option normal for special characters
 --
 --
+-- ## Optional Integrations
+--
+-- **Lualine Status** (add to your lualine config):
+-- ```lua
+-- sections = {
+--   lualine_x = {
+--     {
+--       function()
+--         local icon = " "
+--         if package.loaded["copilot"] then
+--           local status = require("copilot.api").status.data.status
+--           if status == "InProgress" then return icon .. "..." end
+--           if status == "Warning" then return icon .. "!" end
+--           return icon
+--         end
+--         return ""
+--       end,
+--     },
+--   },
+-- }
+-- ```
+--
+--
 -- ## Why This Approach?
 --
--- Based on LazyVim's battle-tested patterns:
+-- This config combines best practices from both LazyVim and CodeCompanion:
 -- 1. Uses ghost text by default (better UX)
 -- 2. Proper lazy-loading (faster startup)
--- 3. No keybind conflicts
+-- 3. Non-conflicting keybindings
 -- 4. Works perfectly with blink.cmp
 -- 5. Minimal but complete
 -- 6. Clean file organization
+-- 7. Access to latest AI models (Claude 4.5)
+-- 8. Multi-provider flexibility
 --

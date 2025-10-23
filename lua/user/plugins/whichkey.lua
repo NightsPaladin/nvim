@@ -1,10 +1,16 @@
 return { -- Useful plugin to show you pending keybinds.
   "folke/which-key.nvim",
-  event = "VimEnter", -- Sets the loading event to 'VimEnter'
+  event = "VeryLazy", -- Sets the loading event to 'VeryLazy'
   opts = {
     -- delay between pressing a key and opening which-key (milliseconds)
     -- this setting is independent of vim.o.timeoutlen
-    delay = 0,
+    delay = function(ctx)
+      -- Give 100ms for 'g' keys to allow buffer-local discovery
+      if ctx.keys:match("^g") then
+        return 100
+      end
+      return 0 -- Instant for everything else
+    end,
     icons = {
       -- set icon mappings to true if you have a Nerd Font
       mappings = vim.g.have_nerd_font,
@@ -44,11 +50,17 @@ return { -- Useful plugin to show you pending keybinds.
 
     -- Document existing key chains
     spec = {
+      { "<leader>a", group = "[A]I" },
+      { "<leader>b", group = "[B]uffer" },
       { "<leader>c", group = "[C]ode" },
+      { "<leader>d", group = "[D]ebug" },
       { "<leader>f", group = "[F]ind" },
       { "<leader>g", group = "[G]it" },
-      { "<leader>t", group = "[T]oggle" },
       { "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+      { "<leader>p", group = "[P]roject" },
+      { "<leader>s", group = "[S]nacks Pickers" },
+      { "<leader>t", group = "[T]oggle" },
+      { "<leader>u", group = "[U]I Toggles" },
       { "<leader>z", group = "Telekasten" },
     },
   },
