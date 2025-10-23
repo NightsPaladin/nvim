@@ -384,6 +384,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = "[F]ind [R]esume" })
     vim.keymap.set("n", "<leader>f.", builtin.oldfiles, { desc = '[F]ind Recent Files ("." for repeat)' })
     vim.keymap.set("n", "<leader>fs", builtin.symbols, { desc = "[F]ind [S]ymbols" })
+    vim.keymap.set("n", "<leader>fl", builtin.lsp_document_symbols, { desc = "[F]ind Document Symbo[l]s" })
     vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
     -- Slightly advanced example of overriding default behavior and theme

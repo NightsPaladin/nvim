@@ -33,22 +33,22 @@ return {
     -- }
 
     local filename = {
-    "filename",
-    file_status = true,
-    path = 1,
-    symbols = {
-      modified = "●",  -- No symbol, just color
-      readonly = " ",
-      unnamed = "[No Name]",
-    },
-    -- Filename turns orange when modified
-    color = function()
-      if vim.bo.modified then
-        return { fg = "#ff9e64", gui = "bold" }  -- Orange + bold
-      end
-      return nil  -- Default color when not modified
-    end,
-  }
+      "filename",
+      file_status = true,
+      path = 1,
+      symbols = {
+        modified = "●", -- No symbol, just color
+        readonly = " ",
+        unnamed = "[No Name]",
+      },
+      -- Filename turns orange when modified
+      color = function()
+        if vim.bo.modified then
+          return { fg = "#ff9e64", gui = "bold" } -- Orange + bold
+        end
+        return nil -- Default color when not modified
+      end,
+    }
 
     local filetype = {
       "filetype",

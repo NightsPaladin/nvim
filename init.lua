@@ -64,7 +64,6 @@ spec("user.plugins.telekasten") -- Personal wiki/note-taking
 spec("user.plugins.sops") -- Encrypted secrets management
 spec("user.plugins.project")
 
-
 -- ============================================================================
 -- Disabled Plugins (Replaced by other solutions)
 -- ============================================================================
