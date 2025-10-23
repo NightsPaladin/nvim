@@ -103,6 +103,18 @@ return {
           vim.diagnostic.open_float({ bufnr = event.buf, scope = "line", focus = false })
         end, "Show Line Diagnostics")
 
+        -- Open diagnostics in quickfix list
+        map("<leader>cq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+
+        -- Jump to next/previous diagnostic with floating window
+        map("<leader>cj", function()
+          vim.diagnostic.jump({ count = 1, float = true })
+        end, { desc = "Goto Next Diagnostic" })
+
+        map("<leader>ck", function()
+          vim.diagnostic.jump({ count = -1, float = true })
+        end, { desc = "Goto Previous Diagnostic" })
+
         -- Show LspInfo
         map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
 
@@ -358,7 +370,7 @@ return {
       "black",
       "isort",
       "debugpy",
-      "ruff",          -- Optional but recommended
+      "ruff", -- Optional but recommended
 
       "stylua", -- Used to format Lua code
       "shellcheck",

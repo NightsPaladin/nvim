@@ -30,28 +30,12 @@ keymap("n", "<leader>q", "<cmd>confirm q<CR>", { desc = "Quit" })
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Center screen after search jumps (keeps cursor in middle of screen)
-keymap("n", "n", "nzz", opts)
-keymap("n", "N", "Nzz", opts)
-keymap("n", "*", "*zz", opts)
-keymap("n", "#", "#zz", opts)
-keymap("n", "g*", "g*zz", opts)
-keymap("n", "g#", "g#zz", opts)
-
--- ============================================================================
--- Diagnostics (LSP Errors/Warnings)
--- ============================================================================
-
--- Open diagnostics in quickfix list
-keymap("n", "<leader>cq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-
--- Jump to next/previous diagnostic with floating window
-keymap("n", "<leader>cj", function()
-  vim.diagnostic.jump({ count = 1, float = true })
-end, { desc = "Goto Next Diagnostic" })
-
-keymap("n", "<leader>ck", function()
-  vim.diagnostic.jump({ count = -1, float = true })
-end, { desc = "Goto Previous Diagnostic" })
+keymap("n", "n", "nzz", { desc = "Next search result (centered)" })
+keymap("n", "N", "Nzz", { desc = "Prev search result (centered)" })
+keymap("n", "*", "*zz", { desc = "Next word match (centered)" })
+keymap("n", "#", "#zz", { desc = "Prev word match (centered)" })
+keymap("n", "g*", "g*zz", { desc = "Next word match (centered)" })
+keymap("n", "g#", "g#zz", { desc = "Prev word match (centered)" })
 
 -- ============================================================================
 -- Window Navigation
@@ -110,9 +94,12 @@ keymap("n", "<C-tab>", "<C-6>", opts)
 -- Text Movement & Manipulation
 -- ============================================================================
 
+-- Does not currently work. Ctrl+Shift+k is used by the terminal
 -- Move lines up/down with Ctrl+Shift+jk
-keymap("n", "<C-S-j>", "<Esc>:m .+1<CR>", opts)
-keymap("n", "<C-S-k>", "<Esc>:m .-2<CR>", opts)
+-- TODO: Update to use a keybinding that will allow easy move of lines
+--
+-- keymap("n", "<C-S-j>", "<Esc>:m .+1<CR>", opts)
+-- keymap("n", "<C-S-k>", "<Esc>:m .-2<CR>", opts)
 
 -- Stay in visual mode when indenting
 -- Normally indenting exits visual mode - this keeps you in it
