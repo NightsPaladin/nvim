@@ -114,6 +114,24 @@ return {
         },
         inline = { adapter = "copilot" },
       },
+      extensions = {
+        mcphub = {
+          callback = "mcphub.extensions.codecompanion",
+          opts = {
+            -- MCP Tools - enables @server and @server__tool syntax
+            make_tools = true,
+            show_server_tools_in_chat = true,
+            add_mcp_prefix_to_tool_names = false,
+            show_result_in_chat = true,
+
+            -- MCP Resources - enables #mcp:resource_name variables
+            make_vars = true,
+
+            -- MCP Prompts - enables /mcp:prompt_name slash commands
+            make_slash_commands = true,
+          },
+        },
+      },
       display = {
         chat = {
           window = {
@@ -261,6 +279,42 @@ return {
         end,
       })
     end,
+  },
+
+  {
+    "ravitemer/mcphub.nvim",
+    dependencies = {
+      "olimorris/codecompanion.nvim",
+    },
+    build = "npm install -g mcp-hub@latest",
+    cmd = { "MCPHub" },
+    opts = {
+      servers = {
+        -- Built-in servers (automatically available)
+        filesystem = {
+          enabled = true,
+        },
+        fetch = {
+          enabled = true,
+        },
+
+        -- Optional: Add GitHub integration
+        -- Requires: export GITHUB_TOKEN=your_token
+        -- github = {
+        --   enabled = true,
+        --   env = {
+        --     GITHUB_PERSONAL_ACCESS_TOKEN = vim.env.GITHUB_TOKEN,
+        --   },
+        -- },
+      },
+    },
+    keys = {
+      {
+        "<leader>aM",
+        "<cmd>MCPHub<CR>",
+        desc = "MCP Hub (manage servers)",
+      },
+    },
   },
 
   -- ============================================================================
