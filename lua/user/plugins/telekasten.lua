@@ -105,6 +105,34 @@ return {
     require("telekasten").setup(opts)
 
     -- ============================================================================
+    -- Calendar: Auto-close after opening a note
+    -- ============================================================================
+    -- Track when we're in a calendar->note workflow
+    local calendar_window = nil
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "calendar",
+      callback = function()
+        -- Store the calendar window when it opens
+        calendar_window = vim.api.nvim_get_current_win()
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("BufEnter", {
+      pattern = "*.md",
+      callback = function()
+        -- If we just opened a markdown file and there's a calendar window open, close it
+        if calendar_window and vim.api.nvim_win_is_valid(calendar_window) then
+          local current_win = vim.api.nvim_get_current_win()
+          if current_win ~= calendar_window then
+            vim.api.nvim_win_close(calendar_window, false)
+            calendar_window = nil
+          end
+        end
+      end,
+    })
+
+    -- ============================================================================
     -- Telekasten: Add features to markdown files in wiki directory
     -- ============================================================================
     vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
