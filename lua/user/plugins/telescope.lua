@@ -53,7 +53,15 @@ return { -- Fuzzy Finder (files, lsp, etc)
 
     -- Taken from https://github.com/nvim-telescope/telescope.nvim/issues/1048#issuecomment-1220846367
     --
-    local function multiopen(prompt_bufnr, method)
+local function multiopen(prompt_bufnr, method)
+  local log_file = vim.fn.stdpath("data") .. "/telescope_multiopen_log.txt"
+  local function log_to_file(content)
+    local file = io.open(log_file, "a")
+    if file then
+      file:write(content .. "\n")
+      file:close()
+    end
+  end
       local edit_file_cmd_map = {
         vertical = "vsplit",
         horizontal = "split",
@@ -64,8 +72,13 @@ return { -- Fuzzy Finder (files, lsp, etc)
         horizontal = "sbuffer",
         default = "buffer",
       }
-      local picker = actions_state.get_current_picker(prompt_bufnr)
-      local multi_selection = picker:get_multi_selection()
+local picker = actions_state.get_current_picker(prompt_bufnr)
+log_to_file("Multiopen invoked")
+local multi_selection = picker:get_multi_selection()
+log_to_file("Selected entries:")
+for _, entry in ipairs(multi_selection) do
+  log_to_file(vim.inspect(entry))
+end
 
       if #multi_selection > 1 then
         require("telescope.pickers").on_close_prompt(prompt_bufnr)
