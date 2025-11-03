@@ -134,7 +134,7 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.api.nvim_win_set_width(winid, 80)
 
       -- Optional: Set a minimum width so it doesn't get squished
-      vim.wo[winid].winminwidth = 80
+      vim.api.nvim_win_set_width(winid, 80)
     end)
   end,
 })

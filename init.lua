@@ -29,7 +29,7 @@ spec("user.plugins.markview") -- Markdown rendering inline
 -- ============================================================================
 spec("user.plugins.mini") -- Swiss army knife (surround, pairs, comment, bufremove, indentscope, etc.)
 spec("user.plugins.snacks") -- Terminal, lazygit, notifications, toggles, etc.
-spec("user.plugins.telescope") -- Fuzzy finder
+-- spec("user.plugins.telescope") -- Fuzzy finder
 spec("user.plugins.whichkey") -- Keybinding hints
 spec("user.plugins.nvimtree") -- File explorer
 

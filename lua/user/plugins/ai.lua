@@ -167,12 +167,6 @@ return {
         desc = "Quick Chat (CodeCompanion)",
         mode = { "n", "v" },
       },
-      {
-        "<leader>am",
-        "<cmd>CodeCompanionChat Adapter<CR>",
-        desc = "Select Model (CodeCompanion)",
-        mode = { "n", "v" },
-      },
 
       -- Actions menu (gives access to predefined prompts)
       {
@@ -288,29 +282,10 @@ return {
     },
     build = "npm install -g mcp-hub@latest",
     cmd = { "MCPHub" },
-    opts = {
-      servers = {
-        -- Built-in servers (automatically available)
-        filesystem = {
-          enabled = true,
-        },
-        fetch = {
-          enabled = true,
-        },
-
-        -- Optional: Add GitHub integration
-        -- Requires: export GITHUB_TOKEN=your_token
-        -- github = {
-        --   enabled = true,
-        --   env = {
-        --     GITHUB_PERSONAL_ACCESS_TOKEN = vim.env.GITHUB_TOKEN,
-        --   },
-        -- },
-      },
-    },
+    opts = {},
     keys = {
       {
-        "<leader>aM",
+        "<leader>am",
         "<cmd>MCPHub<CR>",
         desc = "MCP Hub (manage servers)",
       },

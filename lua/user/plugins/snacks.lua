@@ -1,6 +1,6 @@
 -- lua/user/plugins/snacks.lua
 -- Comprehensive snacks.nvim configuration
--- Replaces: toggleterm, lazygit keybindings, and adds quality-of-life features
+-- Replaces: toggleterm, lazygit, and Telescope
 
 return {
   "folke/snacks.nvim",
@@ -33,8 +33,25 @@ return {
     -- Indent guides (using mini.indentscope instead, so disabled)
     indent = { enabled = false },
 
-    -- Picker (optional, using Telescope as primary picker)
-    picker = { enabled = true },
+    -- Picker configuration (replaces Telescope)
+    picker = {
+      enabled = true,
+      -- Use default keybinds and just add/override what we need
+      sources = {
+        files = {
+          hidden = true, -- Show hidden files
+          follow = true, -- Follow symlinks
+        },
+        grep = {
+          hidden = true, -- Search in hidden files
+        },
+      },
+      formatters = {
+        file = {
+          filename_first = true, -- Show filename before path
+        },
+      },
+    },
 
     -- Terminal configuration (replaces toggleterm)
     terminal = {
@@ -70,7 +87,7 @@ return {
     git = { enabled = true },
     gitbrowse = { enabled = true },
 
-    -- Buffer deletion (already using mini.bufremove, but keeping for compatibility)
+    -- Buffer deletion
     bufdelete = { enabled = true },
 
     -- Scratch buffers
@@ -96,9 +113,6 @@ return {
     -- <Leader>2 - Vertical terminal (per directory)
     -- <Leader>3 - Float terminal (per directory)
     -- <C-\> - Toggle last used terminal
-
-    -- Helper function to get or create a terminal for a specific directory and type
-    -- This is defined inline so it's available when keys are evaluated
 
     -- Horizontal terminal per directory
     {
@@ -296,17 +310,17 @@ return {
           vim.api.nvim_win_close(wins[1], true)
         else
           -- Open terminal in floating window
-          local width = math.floor(vim.o.columns * 0.8)
-          local height = math.floor(vim.o.lines * 0.8)
-          local row = math.floor((vim.o.lines - height) / 2)
+          local width = math.floor(vim.o.columns * 0.9)
+          local height = math.floor(vim.o.lines * 0.9)
           local col = math.floor((vim.o.columns - width) / 2)
+          local row = math.floor((vim.o.lines - height) / 2)
 
           local win = vim.api.nvim_open_win(buf, true, {
             relative = "editor",
             width = width,
             height = height,
-            row = row,
             col = col,
+            row = row,
             style = "minimal",
             border = "rounded",
           })
@@ -330,25 +344,7 @@ return {
       mode = { "n", "t" },
     },
 
-    -- Additional terminal shortcuts
-    -- {
-    --   "<leader>tt",
-    --   function()
-    --     Snacks.terminal()
-    --   end,
-    --   desc = "[T]oggle [T]erminal",
-    -- },
-
-    -- {
-    --   "<leader>tf",
-    --   function()
-    --     Snacks.terminal(nil, { cwd = vim.fn.expand("%:p:h") })
-    --   end,
-    --   desc = "[T]erminal in [F]ile directory (explicit)",
-    -- },
-
     -- ==================== LazyGit (replaces toggleterm lazygit) ====================
-    -- Your toggleterm had: <Leader>gg for lazygit
 
     {
       "<leader>gg",
@@ -424,7 +420,7 @@ return {
     -- ==================== Notifications ====================
 
     {
-      "<leader>n",
+      "<leader>sn",
       function()
         Snacks.notifier.show_history()
       end,
@@ -432,7 +428,7 @@ return {
     },
 
     {
-      "<leader>un",
+      "<leader>sN",
       function()
         Snacks.notifier.hide()
       end,
@@ -452,7 +448,7 @@ return {
     -- ==================== Zen Mode ====================
 
     {
-      "<leader>z.",
+      "<leader>sz",
       function()
         Snacks.zen()
       end,
@@ -460,7 +456,7 @@ return {
     },
 
     {
-      "<leader>zZ",
+      "<leader>sZ",
       function()
         Snacks.zen.zoom()
       end,
@@ -508,47 +504,193 @@ return {
       end,
     },
 
-    -- ==================== Snacks Picker (optional, using Telescope as primary) ====================
-    -- These use capital S prefix to differentiate from Telescope
+    -- ==================== Snacks Picker (replaces Telescope) ====================
+    -- All your Telescope keymaps migrated to Snacks.picker
 
+    -- File pickers
     {
-      "<leader>sf",
+      "<leader>fc",
       function()
-        Snacks.picker.files()
+        Snacks.picker.colorschemes()
       end,
-      desc = "Snacks: Files",
+      desc = "[F]ind [C]olorscheme",
     },
 
     {
-      "<leader>sg",
-      function()
-        Snacks.picker.grep()
-      end,
-      desc = "Snacks: Grep",
-    },
-
-    {
-      "<leader>sb",
-      function()
-        Snacks.picker.buffers()
-      end,
-      desc = "Snacks: Buffers",
-    },
-
-    {
-      "<leader>sh",
+      "<leader>fh",
       function()
         Snacks.picker.help()
       end,
-      desc = "Snacks: Help",
+      desc = "[F]ind [H]elp",
     },
 
     {
-      "<leader>so",
+      "<leader>fk",
+      function()
+        Snacks.picker.keymaps()
+      end,
+      desc = "[F]ind [K]eymaps",
+    },
+
+    {
+      "<leader>ff",
+      function()
+        Snacks.picker.files()
+      end,
+      desc = "[F]ind [F]iles",
+    },
+
+    {
+      "<leader>fw",
+      function()
+        Snacks.picker.grep_word()
+      end,
+      desc = "[F]ind current [W]ord",
+    },
+
+    {
+      "<leader>fg",
+      function()
+        Snacks.picker.grep()
+      end,
+      desc = "[F]ind by [G]rep",
+    },
+
+    {
+      "<leader>fd",
+      function()
+        Snacks.picker.diagnostics()
+      end,
+      desc = "[F]ind [D]iagnostics",
+    },
+
+    {
+      "<leader>fr",
+      function()
+        Snacks.picker.resume()
+      end,
+      desc = "[F]ind [R]esume",
+    },
+
+    {
+      "<leader>f.",
       function()
         Snacks.picker.recent()
       end,
-      desc = "Snacks: Recent Files",
+      desc = '[F]ind Recent Files ("." for repeat)',
+    },
+
+    -- LSP Document symbols
+    {
+      "<leader>fl",
+      function()
+        Snacks.picker.lsp_symbols()
+      end,
+      desc = "[F]ind Document Symbo[l]s",
+    },
+
+    -- Buffers
+    {
+      "<leader><leader>",
+      function()
+        Snacks.picker.buffers()
+      end,
+      desc = "[ ] Find existing buffers",
+    },
+
+    -- Search in current buffer
+    {
+      "<leader>/",
+      function()
+        Snacks.picker.lines()
+      end,
+      desc = "[/] Fuzzily search in current buffer",
+    },
+
+    -- Grep in open files
+    {
+      "<leader>f/",
+      function()
+        Snacks.picker.grep_buffers()
+      end,
+      desc = "[F]ind [/] in Open Files",
+    },
+
+    -- Find Neovim config files
+    {
+      "<leader>fn",
+      function()
+        Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+      end,
+      desc = "[F]ind [N]eovim files",
+    },
+
+    -- Git pickers
+    {
+      "<leader>gs",
+      function()
+        Snacks.picker.git_status()
+      end,
+      desc = "[G]it [S]tatus",
+    },
+
+    {
+      "<leader>gc",
+      function()
+        Snacks.picker.git_log()
+      end,
+      desc = "[G]it [C]ommits",
+    },
+
+    -- NOTE: LSP keybinds (grr, grd, gri, grt, gO, gW) are in your lsp.lua
+
+    -- Additional useful pickers
+    {
+      "<leader>fm",
+      function()
+        Snacks.picker.marks()
+      end,
+      desc = "[F]ind [M]arks",
+    },
+
+    {
+      "<leader>fj",
+      function()
+        Snacks.picker.jumps()
+      end,
+      desc = "[F]ind [J]umps",
+    },
+
+    {
+      "<leader>fq",
+      function()
+        Snacks.picker.qflist()
+      end,
+      desc = "[F]ind [Q]uickfix",
+    },
+
+    {
+      "<leader>fv",
+      function()
+        Snacks.picker.vim_options()
+      end,
+      desc = "[F]ind [V]im Options",
+    },
+
+    {
+      "<leader>fa",
+      function()
+        Snacks.picker.autocmds()
+      end,
+      desc = "[F]ind [A]utocommands",
+    },
+
+    {
+      "<leader>fC",
+      function()
+        Snacks.picker.commands()
+      end,
+      desc = "[F]ind [C]ommands",
     },
   },
 
@@ -568,6 +710,7 @@ return {
         end
         vim.print = _G.dd -- Override print to use snacks for `:=` command
 
+        -- Toggle mappings
         Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
         Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
         Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>ur")
