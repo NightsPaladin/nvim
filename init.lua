@@ -1,91 +1,81 @@
 -- ============================================================================
--- Core Configuration (Must Load First)
+-- Essential Core Modules (Load First: Sets up base options, keymaps, and events)
 -- ============================================================================
-require("user.launch")
-require("user.options")
-require("user.keymaps")
-require("user.autocommands")
+require("user.launch")        -- Plugin specification system
+require("user.options")       -- Vim/neovim options and settings
+require("user.keymaps")       -- Global keybindings
+require("user.autocommands")  -- Automated commands for events
 
 -- ============================================================================
--- UI & Appearance
+-- User Interface & Appearance (Colors, statusline, navigation)
 -- ============================================================================
-spec("user.colorscheme")
-spec("user.plugins.lualine") -- Statusline
-spec("user.plugins.breadcrumbs") -- Breadcrumb navigation
-spec("user.plugins.navic") -- LSP symbol context
+spec("user.colorscheme")                -- Set colorscheme
+spec("user.plugins.lualine")            -- Statusline
+spec("user.plugins.breadcrumbs")        -- Show code context in statusline
+spec("user.plugins.navic")              -- LSP symbol navigation
 
 -- ============================================================================
--- Core Editing & LSP (Foundation for other plugins)
+-- Language Support & Editing (LSP, completion, syntax, markdown)
 -- ============================================================================
-spec("user.plugins.lazydev") -- Lua LSP for Neovim config (dependency for cmp)
-spec("user.plugins.schemastore") -- JSON/YAML schemas (dependency for LSP)
-spec("user.plugins.lsp") -- LSP configuration
-spec("user.plugins.cmp") -- Completion engine
-spec("user.plugins.treesitter") -- Syntax parsing & highlighting
-spec("user.plugins.markview") -- Markdown rendering inline
+spec("user.plugins.lazydev")            -- Lua LSP for Neovim config (dependency for completion)
+spec("user.plugins.schemastore")        -- JSON/YAML schemas (dependency for LSP)
+spec("user.plugins.lsp")                -- Language Server Protocol setup
+spec("user.plugins.cmp")                -- Completion engine
+spec("user.plugins.treesitter")         -- Syntax highlighting and parsing
+spec("user.plugins.markview")           -- Inline Markdown rendering
 
 -- ============================================================================
--- Editor Enhancements (Multi-purpose plugins)
+-- Editor Enhancements (General productivity plugins)
 -- ============================================================================
-spec("user.plugins.mini") -- Swiss army knife (surround, pairs, comment, bufremove, indentscope, etc.)
-spec("user.plugins.snacks") -- Terminal, lazygit, notifications, toggles, etc.
--- spec("user.plugins.telescope") -- Fuzzy finder
-spec("user.plugins.whichkey") -- Keybinding hints
-spec("user.plugins.nvimtree") -- File explorer
+spec("user.plugins.mini")               -- Multi-tool: surround, pairs, comment, etc.
+spec("user.plugins.snacks")             -- Terminal, lazygit, notifications, toggles
+-- spec("user.plugins.telescope")        -- Fuzzy finder (disabled)
+spec("user.plugins.whichkey")           -- Keybinding hints
+spec("user.plugins.nvimtree")           -- File explorer
 
 -- ============================================================================
 -- Code Quality & Formatting
 -- ============================================================================
-spec("user.plugins.conform") -- Code formatting
-spec("user.plugins.guessindent") -- Auto-detect indentation
-spec("user.plugins.colorizer") -- Color code highlighting
-spec("user.plugins.todocomments") -- Highlight TODO/FIXME/etc in comments
+spec("user.plugins.conform")            -- Code formatting
+spec("user.plugins.guessindent")        -- Auto-detect indentation
+spec("user.plugins.colorizer")          -- Highlight color codes
+spec("user.plugins.todocomments")       -- Highlight TODO/FIXME in comments
 
 -- ============================================================================
 -- Git Integration
 -- ============================================================================
-spec("user.plugins.gitsigns") -- Git signs in gutter, hunk navigation
+spec("user.plugins.gitsigns")           -- Git status in gutter, hunk navigation
 
 -- ============================================================================
 -- Debugging
 -- ============================================================================
-spec("user.plugins.dap") -- Debug Adapter Protocol
+spec("user.plugins.dap")                -- Debug Adapter Protocol support
 
 -- ============================================================================
 -- AI & Copilot
 -- ============================================================================
-spec("user.plugins.ai") -- GitHub Copilot & CopilotChat
--- require("user.plugins.copilot-telescope") -- Multi-file selection for CopilotChat
+spec("user.plugins.ai")                 -- GitHub Copilot & CopilotChat
+-- require("user.plugins.copilot-telescope") -- Multi-file CopilotChat (disabled)
 
 -- ============================================================================
--- Specialty & Project-Specific
+-- Specialty & Project-Specific Plugins
 -- ============================================================================
-spec("user.plugins.telekasten") -- Personal wiki/note-taking
-spec("user.plugins.sops") -- Encrypted secrets management
-spec("user.plugins.project")
+spec("user.plugins.telekasten")         -- Personal wiki/note-taking
+spec("user.plugins.sops")               -- Encrypted secrets management
+spec("user.plugins.project")            -- Project management
 
 -- ============================================================================
--- Disabled Plugins (Replaced by other solutions)
+-- Disabled Plugins (Superseded by other solutions)
 -- ============================================================================
-
--- Replaced by lualine
--- spec("user.plugins.bufferline")
-
--- Replaced by snacks.nvim gitbrowse
--- spec("user.plugins.gitlinker")
-
--- Replaced by mini.indentscope
--- spec("user.plugins.indentline")
-
--- Replaced by mini.surround
--- spec("user.plugins.nvimsurround")
-
--- Replaced by snacks.nvim terminal and lazygit
--- spec("user.plugins.toggleterm")
+-- spec("user.plugins.bufferline")       -- Replaced by lualine
+-- spec("user.plugins.gitlinker")        -- Replaced by snacks.nvim gitbrowse
+-- spec("user.plugins.indentline")       -- Replaced by mini.indentscope
+-- spec("user.plugins.nvimsurround")     -- Replaced by mini.surround
+-- spec("user.plugins.toggleterm")       -- Replaced by snacks.nvim terminal/lazygit
 
 -- ============================================================================
 -- Plugin Manager Initialization (Must Be Last)
 -- ============================================================================
-require("user.lazy")
+require("user.lazy")                    -- Initialize plugin manager
 
 -- vim: ts=2 sts=2 sw=2 et

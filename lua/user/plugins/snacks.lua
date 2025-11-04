@@ -48,7 +48,7 @@ return {
       },
       formatters = {
         file = {
-          filename_first = true, -- Show filename before path
+          filename_first = false, -- Show path before filename (like Telescope)
         },
       },
     },
