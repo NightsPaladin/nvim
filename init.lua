@@ -29,7 +29,7 @@ spec("user.plugins.markview")           -- Inline Markdown rendering
 -- ============================================================================
 spec("user.plugins.mini")               -- Multi-tool: surround, pairs, comment, etc.
 spec("user.plugins.snacks")             -- Terminal, lazygit, notifications, toggles
--- spec("user.plugins.telescope")        -- Fuzzy finder (disabled)
+spec("user.plugins.telescope")          -- Fuzzy finder (disabled)
 spec("user.plugins.whichkey")           -- Keybinding hints
 spec("user.plugins.nvimtree")           -- File explorer
 
@@ -62,7 +62,7 @@ spec("user.plugins.ai")                 -- GitHub Copilot & CopilotChat
 -- ============================================================================
 spec("user.plugins.telekasten")         -- Personal wiki/note-taking
 spec("user.plugins.sops")               -- Encrypted secrets management
-spec("user.plugins.project")            -- Project management
+-- NOTE: Project management is loaded in snacks.lua after VeryLazy event
 
 -- ============================================================================
 -- Disabled Plugins (Superseded by other solutions)

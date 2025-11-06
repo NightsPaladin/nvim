@@ -1,6 +1,6 @@
 -- lua/user/plugins/mini.lua
 -- Mini.nvim configuration
--- Provides: surround, pairs, comment, bufremove, indentscope, trailspace, ai
+-- Provides: icons, surround, pairs, comment, bufremove, indentscope, trailspace, ai
 --
 -- Where snacks.nvim and mini.nvim overlap, snacks.nvim takes precedence
 -- Mini.nvim alternatives are commented out for you to try later
@@ -10,6 +10,10 @@ return {
   event = "VeryLazy",
   config = function()
     -- ==================== Active Mini Modules ====================
+
+    -- Icon provider (replaces nvim-web-devicons)
+    -- Automatically provides icons for nvim-tree, bufferline, lualine, telescope, etc.
+    require("mini.icons").setup({})
 
     -- Enhanced text objects (works great with treesitter)
     require("mini.ai").setup({ n_lines = 500 })

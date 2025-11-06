@@ -6,6 +6,7 @@ return {
   "folke/snacks.nvim",
   priority = 1000,
   lazy = false,
+  dependencies = { "nvim-lua/plenary.nvim" }, -- Required for project management
   ---@type snacks.Config
   opts = {
     -- Core modules
@@ -359,7 +360,7 @@ return {
       function()
         Snacks.lazygit.log_file()
       end,
-      desc = "Lazygit Current File History",
+      desc = "Lazygit Current [F]ile History",
     },
 
     {
@@ -367,7 +368,7 @@ return {
       function()
         Snacks.lazygit.log()
       end,
-      desc = "Lazygit Log (cwd)",
+      desc = "[L]azygit Log (cwd)",
     },
 
     -- ==================== Git Utilities ====================
@@ -377,7 +378,7 @@ return {
       function()
         Snacks.git.blame_line()
       end,
-      desc = "Git Blame Line",
+      desc = "[G]it [B]lame Line",
     },
 
     {
@@ -385,7 +386,7 @@ return {
       function()
         Snacks.gitbrowse()
       end,
-      desc = "Git Browse & Yank Link",
+      desc = "[G]it Browse & [Y]ank Link",
       mode = { "n", "v" },
     },
 
@@ -452,7 +453,7 @@ return {
       function()
         Snacks.zen()
       end,
-      desc = "[Z]en mode",
+      desc = "Snacks: [Z]en mode",
     },
 
     {
@@ -460,7 +461,7 @@ return {
       function()
         Snacks.zen.zoom()
       end,
-      desc = "[Z]oom (zen with zoom)",
+      desc = "Snacks: [Z]oom (zen with zoom)",
     },
 
     -- ==================== Word Highlighting ====================
@@ -487,7 +488,7 @@ return {
 
     {
       "<leader>N",
-      desc = "Neovim News",
+      desc = "[N]eovim News",
       function()
         Snacks.win({
           file = vim.api.nvim_get_runtime_file("doc/news.txt", false)[1],
@@ -726,6 +727,9 @@ return {
         Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub")
         Snacks.toggle.inlay_hints():map("<leader>ui")
         Snacks.toggle.words():map("<leader>uW") -- Capital W to differentiate from wrap
+
+        -- Load project management functionality
+        require("user.project")
       end,
     })
   end,
