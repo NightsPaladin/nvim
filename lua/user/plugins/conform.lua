@@ -36,7 +36,18 @@ return { -- Autoformat
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      
+      -- DevOps & Infrastructure-as-Code
+      terraform = { "terraform_fmt" },
+      tf = { "terraform_fmt" },
+      hcl = { "terraform_fmt" },
       yaml = { "yamlfmt" },
+      json = { "jq" },
+      jsonc = { "jq" },
+      markdown = { "prettier" },
+      sh = { "shfmt" },
+      bash = { "shfmt" },
+      toml = { "taplo" },
     },
     formatters = {
       yamlfmt = {
