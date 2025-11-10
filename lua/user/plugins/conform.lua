@@ -8,7 +8,7 @@ return { -- Autoformat
       function()
         require("conform").format({ async = true, lsp_format = "fallback" })
       end,
-      mode = "",
+      mode = "n",
       desc = "[F]ormat buffer",
     },
   },
@@ -36,7 +36,7 @@ return { -- Autoformat
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      
+
       -- DevOps & Infrastructure-as-Code
       terraform = { "terraform_fmt" },
       tf = { "terraform_fmt" },
@@ -48,6 +48,20 @@ return { -- Autoformat
       sh = { "shfmt" },
       bash = { "shfmt" },
       toml = { "taplo" },
+
+      -- Web development (native Prettier support)
+      javascript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescript = { "prettier" },
+      typescriptreact = { "prettier" },
+      css = { "prettier" },
+      scss = { "prettier" },
+      less = { "prettier" },
+      html = { "prettier" },
+      vue = { "prettier" },
+      svelte = { "prettier" },
+      graphql = { "prettier" },
+      handlebars = { "prettier" },
     },
     formatters = {
       yamlfmt = {

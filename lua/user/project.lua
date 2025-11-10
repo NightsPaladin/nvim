@@ -36,20 +36,20 @@ local function pick_project()
     vim.notify("No projects found in " .. projects_root, vim.log.levels.WARN)
     return
   end
-  
+
   local expanded_root = vim.fn.expand(projects_root)
   local items = {}
-  
+
   for _, project_path in ipairs(projects) do
     local project_name = vim.fn.fnamemodify(project_path, ":t")
     local relative_path = project_path:gsub("^" .. vim.pesc(expanded_root) .. "/", "")
-    
+
     table.insert(items, {
       file = project_path,
       text = string.format("%-30s  %s", project_name, relative_path),
     })
   end
-  
+
   snacks.picker.pick({
     items = items,
     title = "Select Project",

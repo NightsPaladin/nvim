@@ -17,12 +17,12 @@ return {
         auto_trigger = true,
         hide_during_completion = true, -- Hide ghost text during completion
         keymap = {
-          accept = "<C-g>",      -- Accept suggestion
+          accept = "<C-g>", -- Accept suggestion
           accept_word = false,
           accept_line = false,
-          next = "<C-]>",        -- Next suggestion
-          prev = "<C-[>",        -- Previous suggestion
-          dismiss = "<Esc><Esc>",-- Dismiss suggestion
+          next = "<C-]>", -- Next suggestion
+          prev = "<C-[>", -- Previous suggestion
+          dismiss = "<Esc><Esc>", -- Dismiss suggestion
           -- Option keybindings available if configured in terminal
         },
       },
@@ -76,11 +76,13 @@ return {
             ["file"] = {
               opts = {
                 provider = "snacks",
+                auto_insert = true, -- Auto insert file into existing window
               },
             },
             ["buffer"] = {
               opts = {
                 provider = "snacks",
+                auto_insert = true,
               },
             },
             ["help"] = {
@@ -101,16 +103,23 @@ return {
         mcphub = {
           callback = "mcphub.extensions.codecompanion",
           opts = {
-            make_tools = true,           -- Enable MCP tools
+            make_tools = true, -- Enable MCP tools
             show_server_tools_in_chat = true,
             add_mcp_prefix_to_tool_names = false,
             show_result_in_chat = true,
-            make_vars = true,            -- Enable MCP resources
-            make_slash_commands = true,  -- Enable MCP prompts
+            make_vars = true, -- Enable MCP resources
+            make_slash_commands = true, -- Enable MCP prompts
           },
         },
       },
       display = {
+        action_palette = {
+          width = 95,
+          height = 10,
+        },
+        diff = {
+          provider = "mini_diff",
+        },
         chat = {
           window = {
             layout = "vertical",
@@ -124,10 +133,17 @@ return {
       -- Main chat interface
       { "<leader>aa", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat", mode = { "n", "v" } },
       { "<leader>ax", "<cmd>CodeCompanionChat Add<CR>", desc = "Add to Chat", mode = { "n", "v" } },
-      { "<leader>aq", function()
+      {
+        "<leader>aq",
+        function()
           local input = vim.fn.input("Quick Chat: ")
-          if input ~= "" then vim.cmd("CodeCompanionChat " .. input) end
-        end, desc = "Quick Chat", mode = { "n", "v" } },
+          if input ~= "" then
+            vim.cmd("CodeCompanionChat " .. input)
+          end
+        end,
+        desc = "Quick Chat",
+        mode = { "n", "v" },
+      },
       { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions Menu", mode = { "n", "v" } },
       { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant", mode = "v" },
       { "<leader>ae", "<cmd>CodeCompanionActions explain<CR>", desc = "Explain Code", mode = "v" },
@@ -138,72 +154,91 @@ return {
       { "<leader>at", "<cmd>CodeCompanionActions tests<CR>", desc = "Generate Tests", mode = "v" },
       { "<leader>ac", "<cmd>CodeCompanionActions commit<CR>", desc = "Generate Commit Message" },
     },
-      config = function(_, opts)
-        require("codecompanion").setup(opts)
+    config = function(_, opts)
+      require("codecompanion").setup(opts)
 
-        -- Auto-insert mode for chat buffer and register keybindings
-        vim.api.nvim_create_autocmd("FileType", {
-          pattern = "codecompanion",
-          callback = function()
-            vim.opt_local.relativenumber = false
-            vim.opt_local.number = false
-            -- Register buffer-local keybindings with which-key
-            local ok, wk = pcall(require, "which-key")
-            if ok then
-              wk.add({
-                { "ga", desc = "Change adapter", buffer = 0 },
-                { "gs", desc = "Toggle system prompt", buffer = 0 },
-                { "gS", desc = "Show usage stats", buffer = 0 },
-                { "gy", desc = "Yank codeblock", buffer = 0 },
-                { "gc", desc = "Insert codeblock", buffer = 0 },
-                { "gf", desc = "Fold codeblocks", buffer = 0 },
-                { "gp", desc = "Pin context", buffer = 0 },
-                { "gw", desc = "Watch buffer", buffer = 0 },
-                { "gd", desc = "Debug view", buffer = 0 },
-                { "gD", desc = "Super Diff", buffer = 0 },
-                { "gr", desc = "Regenerate", buffer = 0 },
-                { "gR", desc = "Go to file", buffer = 0 },
-                { "gx", desc = "Clear chat", buffer = 0 },
-                { "gM", desc = "Clear memory", buffer = 0 },
-                { "gt", group = "Tools", buffer = 0 },
-                { "gta", desc = "Toggle auto tools", buffer = 0 },
-              })
-            end
-          end,
-        })
+      -- Auto-insert mode for chat buffer and register keybindings
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "codecompanion",
+        callback = function()
+          vim.opt_local.relativenumber = false
+          vim.opt_local.number = false
+          -- Register buffer-local keybindings with which-key
+          local ok, wk = pcall(require, "which-key")
+          if ok then
+            wk.add({
+              { "ga", desc = "Change adapter", buffer = 0 },
+              { "gs", desc = "Toggle system prompt", buffer = 0 },
+              { "gS", desc = "Show usage stats", buffer = 0 },
+              { "gy", desc = "Yank codeblock", buffer = 0 },
+              { "gc", desc = "Insert codeblock", buffer = 0 },
+              { "gf", desc = "Fold codeblocks", buffer = 0 },
+              { "gp", desc = "Pin context", buffer = 0 },
+              { "gw", desc = "Watch buffer", buffer = 0 },
+              { "gd", desc = "Debug view", buffer = 0 },
+              { "gD", desc = "Super Diff", buffer = 0 },
+              { "gr", desc = "Regenerate", buffer = 0 },
+              { "gR", desc = "Go to file", buffer = 0 },
+              { "gx", desc = "Clear chat", buffer = 0 },
+              { "gM", desc = "Clear memory", buffer = 0 },
+              { "gt", group = "Tools", buffer = 0 },
+              { "gta", desc = "Toggle auto tools", buffer = 0 },
+            })
+          end
+        end,
+      })
 
-        -- Ensure files open in non-chat windows only
-        vim.api.nvim_create_autocmd("BufWinEnter", {
-          pattern = "*",
-          callback = function(args)
-            local buf = args.buf
-            local ft = vim.bo[buf].filetype
-            if ft == "codecompanion" then return end
-            local codecompanion_wins = {}
-            for _, win in ipairs(vim.api.nvim_list_wins()) do
+      -- Prevent CodeCompanion from opening files in the chat window itself
+      -- Redirect file buffers to existing non-chat windows
+      vim.api.nvim_create_autocmd("BufWinEnter", {
+        pattern = "*",
+        callback = function(args)
+          local buf = args.buf
+          local current_win = vim.api.nvim_get_current_win()
+
+          -- Get buffer info
+          local ft = vim.bo[buf].filetype
+          local bt = vim.bo[buf].buftype
+
+          -- Only handle regular file buffers (skip special buffers like pickers, terminals, etc.)
+          if bt ~= "" then
+            return
+          end
+          if ft == "codecompanion" then
+            return
+          end
+
+          -- Check if current window is a codecompanion window
+          local current_win_buf = vim.api.nvim_win_get_buf(current_win)
+          if vim.bo[current_win_buf].filetype ~= "codecompanion" then
+            return
+          end
+
+          -- We're trying to open a file in the codecompanion window - redirect it
+          -- Find the first non-codecompanion window
+          local target_win = nil
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            if win ~= current_win and vim.api.nvim_win_is_valid(win) then
               local win_buf = vim.api.nvim_win_get_buf(win)
-              if vim.bo[win_buf].filetype == "codecompanion" then
-                table.insert(codecompanion_wins, win)
+              if vim.bo[win_buf].filetype ~= "codecompanion" then
+                target_win = win
+                break
               end
             end
-            if #codecompanion_wins > 0 then
-              local buf_wins = vim.fn.win_findbuf(buf)
-              if #buf_wins > 1 then
-                for i = 2, #buf_wins do
-                  local win = buf_wins[i]
-                  local is_codecompanion = false
-                  for _, cc_win in ipairs(codecompanion_wins) do
-                    if win == cc_win then is_codecompanion = true; break end
-                  end
-                  if not is_codecompanion and vim.api.nvim_win_is_valid(win) then
-                    vim.api.nvim_win_close(win, false)
-                  end
-                end
+          end
+
+          -- If we found a target window, open the buffer there instead
+          if target_win then
+            vim.schedule(function()
+              if vim.api.nvim_win_is_valid(target_win) and vim.api.nvim_buf_is_valid(buf) then
+                vim.api.nvim_win_set_buf(target_win, buf)
+                vim.api.nvim_set_current_win(target_win)
               end
-            end
-          end,
-        })
-      end,
+            end)
+          end
+        end,
+      })
+    end,
   },
 
   {

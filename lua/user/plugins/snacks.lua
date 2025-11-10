@@ -37,6 +37,10 @@ return {
     -- Picker configuration (replaces Telescope)
     picker = {
       enabled = true,
+      -- Window configuration to prevent stealing current buffer
+      win = {
+        style = "picker",
+      },
       -- Use default keybinds and just add/override what we need
       sources = {
         files = {
@@ -45,6 +49,17 @@ return {
         },
         grep = {
           hidden = true, -- Search in hidden files
+        },
+        buffers = {
+          -- Custom keymaps for the buffers picker
+          win = {
+            input = {
+              keys = {
+                ["dd"] = { "bufdelete", mode = "n" },
+                ["yy"] = { "yank", mode = "n" },
+              },
+            },
+          },
         },
       },
       formatters = {
@@ -727,6 +742,61 @@ return {
         Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub")
         Snacks.toggle.inlay_hints():map("<leader>ui")
         Snacks.toggle.words():map("<leader>uW") -- Capital W to differentiate from wrap
+
+        -- Adaptive path shortening: keeps as many full segments as fit, shortens earlier ones
+        local function shorten_path(path, max_len, separator)
+          separator = separator or "/"
+          local parts = vim.split(path, separator, { plain = true })
+
+          -- If it already fits or has very few parts, return as-is
+          if vim.api.nvim_strwidth(path) <= max_len or #parts <= 1 then
+            return path
+          end
+
+          -- Start with all parts and work backwards, deciding what to keep full
+          local result = {}
+          local current_width = 0
+
+          -- Always keep the last part (filename) full
+          for i = #parts, 1, -1 do
+            local part = parts[i]
+            if part ~= "" then
+              local full_width = vim.api.nvim_strwidth(part)
+              local short_width = vim.api.nvim_strwidth(part:sub(1, 1))
+              local sep_width = (i < #parts) and 1 or 0 -- Account for separator
+
+              -- Try to fit the full segment
+              if current_width + full_width + sep_width <= max_len then
+                table.insert(result, 1, part)
+                current_width = current_width + full_width + sep_width
+              else
+                -- Not enough space for full segment, use shortened version
+                table.insert(result, 1, part:sub(1, 1))
+                current_width = current_width + short_width + sep_width
+              end
+            end
+          end
+
+          return table.concat(result, separator)
+        end
+
+        -- Override snacks truncpath to use our custom shortening
+        local truncpath_orig = Snacks.picker.util.truncpath
+        Snacks.picker.util.truncpath = function(path, len, opts)
+          -- First normalize the path using original function with a large length
+          -- to prevent it from truncating
+          local normalized = truncpath_orig(path, 9999, opts)
+
+          -- Then apply our adaptive shortening
+          local shortened = shorten_path(normalized, len)
+
+          -- If somehow still too long, fall back to original
+          if vim.api.nvim_strwidth(shortened) > len then
+            return truncpath_orig(path, len, opts)
+          end
+
+          return shortened
+        end
 
         -- Load project management functionality
         require("user.project")

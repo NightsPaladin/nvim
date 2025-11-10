@@ -1,10 +1,10 @@
 -- ============================================================================
 -- Essential Core Modules (Load First: Sets up base options, keymaps, and events)
 -- ============================================================================
-require("user.launch")        -- Plugin specification system
-require("user.options")       -- Vim/neovim options and settings
-require("user.keymaps")       -- Global keybindings
-require("user.autocommands")  -- Automated commands for events
+require("user.launch")                  -- Plugin specification system
+require("user.options")                 -- Vim/neovim options and settings
+require("user.keymaps")                 -- Global keybindings
+require("user.autocommands")            -- Automated commands for events
 
 -- ============================================================================
 -- User Interface & Appearance (Colors, statusline, navigation)
@@ -28,8 +28,8 @@ spec("user.plugins.markview")           -- Inline Markdown rendering
 -- Editor Enhancements (General productivity plugins)
 -- ============================================================================
 spec("user.plugins.mini")               -- Multi-tool: surround, pairs, comment, etc.
-spec("user.plugins.snacks")             -- Terminal, lazygit, notifications, toggles
-spec("user.plugins.telescope")          -- Fuzzy finder (disabled)
+spec("user.plugins.snacks")             -- Terminal, lazygit, pickers, notifications, toggles
+spec("user.plugins.telescope")          -- Minimal config (dependency for telekasten)
 spec("user.plugins.whichkey")           -- Keybinding hints
 spec("user.plugins.nvimtree")           -- File explorer
 
