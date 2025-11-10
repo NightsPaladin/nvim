@@ -11,7 +11,7 @@ This configuration has evolved over time. It originally started with Launch.nvim
 - 🚀 **Fast startup** - Lazy-loaded plugins for optimal performance
 - 🎨 **Multiple colorschemes** - Gruvbox, Catppuccin, Tokyo Night, and more
 - 📝 **Powerful completion** - blink.cmp with LSP, snippets, and path completion
-- 🔍 **Fuzzy finding** - Telescope for files, grep, LSP, and more
+- 🔍 **Fuzzy finding** - Snacks picker for files, grep, LSP, and more
 - 🤖 **AI Integration** - GitHub Copilot with chat interface
 - 🐛 **Full debugging** - DAP support for Go and Python
 - 📚 **Personal wiki** - Telekasten for note-taking and knowledge management
@@ -22,35 +22,56 @@ This configuration has evolved over time. It originally started with Launch.nvim
 
 ## 📋 Prerequisites
 
-### Option 1: Homebrew (macOS & Linux)
+The included `install.sh` script handles most Neovim-specific dependencies (Neovim itself, Python, Node.js, LSP servers, formatters, linters). However, you'll need to install base system tools first.
 
-macOS:
+### Quick Install Prerequisites
+
+**Before running `install.sh`:**
+
+**macOS:**
 ```bash
-# Core tools
-brew install neovim git ripgrep fd lazygit make node go python@3
-
-# Nerd Font for icons (no tap needed as of 2024)
+# Homebrew will be auto-installed by the script if not present
+# Just install a Nerd Font for icons
 brew install font-hack-nerd-font
-# Or choose another: font-jetbrains-mono-nerd-font, font-fira-code-nerd-font, etc.
+# Or: font-jetbrains-mono-nerd-font, font-fira-code-nerd-font, etc.
 ```
 
-Linux (with Homebrew):
+**Linux:**
+```bash
+# Homebrew will be auto-installed by the script if not present
+# Install build tools and clipboard support
+sudo apt install xclip gcc make curl git  # Debian/Ubuntu
+sudo dnf install xclip gcc make curl git  # Fedora
+sudo pacman -S xclip gcc make curl git    # Arch
+
+# Install a Nerd Font for icons
+# See "Nerd Fonts" section below for your distribution
+```
+
+### Manual Install Prerequisites (Full Dependencies)
+
+If you prefer to install everything manually without using the install script:
+
+**macOS:**
 ```bash
 # Core tools
 brew install neovim git ripgrep fd lazygit make node go python@3
 
-# Nerd Font for icons (no tap needed as of 2024!)
+# Nerd Font for icons
 brew install font-hack-nerd-font
 # Or choose another: font-jetbrains-mono-nerd-font, font-fira-code-nerd-font, etc.
 ```
 
 **Linux (with Homebrew):**
 ```bash
+# Core tools
 brew install neovim git ripgrep fd lazygit make node go python@3 xclip gcc
+
+# Nerd Font for icons
 brew install font-hack-nerd-font
 ```
 
-### Option 2: Native Package Managers (Linux)
+**Linux (Native Package Managers):**
 
 #### Ubuntu 24.04
 
@@ -203,45 +224,31 @@ makepkg -si
 cd .. && rm -rf yay
 ```
 
-### Optional but Recommended
+### Optional Language Support
 
-**Additional language support** (install as needed):
+The install script sets up Go and Rust tools if they're already installed. To add support:
 
 ```bash
 # Via Homebrew
-brew install rust cargo lua
+brew install rust go lua
 
 # Via apt (Ubuntu/Debian)
-sudo apt install rustc cargo lua5.4
+sudo apt install rustc cargo golang lua5.4
 
 # Via dnf (Fedora)
-sudo dnf install rust cargo lua
+sudo dnf install rust cargo golang lua
 
 # Via pacman (Arch)
-sudo pacman -S rust lua
+sudo pacman -S rust go lua
 ```
 
-### Verifying Installation
-
-After installing with any method, verify everything works:
-
-```bash
-# Check versions
-nvim --version      # Should be 0.9.0 or higher
-git --version
-rg --version
-fd --version
-lazygit --version
-node --version
-go version
-python3 --version
-
-# Check clipboard (Linux only)
-echo "test" | xclip -selection clipboard
-xclip -selection clipboard -o
-```
+After installing these languages, re-run `./install.sh` to install their respective tools.
 
 ## 🚀 Installation
+
+### Quick Install (Recommended)
+
+The included install script handles all dependencies automatically:
 
 1. **Backup existing config** (if you have one):
    ```bash
@@ -254,39 +261,94 @@ xclip -selection clipboard -o
    git clone <your-repo-url> ~/.config/nvim
    ```
 
-3. **Install dependencies**:
-   - Choose **Option 1** (Homebrew) or **Option 2** (Native Package Manager) from the Prerequisites section above
-   - Follow the appropriate commands for your operating system
+3. **Install prerequisites**:
+   - For Quick Install: Follow "Quick Install Prerequisites" above (just Nerd Font + system tools)
+   - For Manual Install: Follow "Manual Install Prerequisites" above (all tools)
 
-4. **Configure terminal font**:
-   - Set your terminal to use a Nerd Font (Hack Nerd Font if following the guide)
+4. **Run the install script** (for Quick Install):
+   ```bash
+   cd ~/.config/nvim
+   ./install.sh
+   ```
+   
+   The script will:
+   - Install Homebrew (if not present)
+   - Install mise for version management
+   - Install Neovim (via mise)
+   - Install Python 3.12 and Node.js LTS (via mise)
+   - Install Julia (required by Mason, via mise)
+   - Install all formatters, linters, and LSP servers
+   - Install plugin-specific tools (sops, catimg, mcp-hub)
+   - Set up language tools for Go and Rust (if already installed)
+
+5. **Configure terminal font**:
+   - Set your terminal to use a Nerd Font (install from Prerequisites section)
    - iTerm2: Preferences → Profiles → Text → Font
    - Alacritty: Edit `~/.config/alacritty/alacritty.toml`
    - Kitty: Edit `~/.config/kitty/kitty.conf`
    - GNOME Terminal: Preferences → Profile → Text → Custom font
    - Konsole: Settings → Edit Current Profile → Appearance → Font
 
-5. **Ubuntu/Debian users only**: Ensure fd symlink is in PATH:
-   
-   Ubuntu and Debian install `fd` as `fdfind` to avoid naming conflicts. If you followed the installation instructions above, you've already created the symlink. Verify it works:
-   ```bash
-   fd --version  # Should show fd version, not "command not found"
-   ```
-
 6. **Launch Neovim**:
    ```bash
    nvim
    ```
    - Lazy.nvim will automatically install all plugins
-   - Mason will auto-install LSP servers and tools
+   - Mason will auto-install remaining LSP servers and tools
    - First launch may take a few minutes
 
-7. **Verify installation**:
+7. **Authenticate Copilot** (for AI features):
+   ```vim
+   :Copilot auth
+   ```
+
+8. **Verify installation**:
    ```vim
    :checkhealth
    :Mason
    :LspInfo
    ```
+
+### Manual Install
+
+If you prefer to install dependencies manually or already have the prerequisites:
+
+1. **Backup and clone** (steps 1-2 above)
+
+2. **Install prerequisites** manually:
+   - Follow the **Prerequisites** section for your OS
+   - Ensure you have: Neovim, Git, ripgrep, fd, lazygit, Node.js, Python, Go (optional)
+   - Install a Nerd Font
+
+3. **Configure terminal font** (step 4 above)
+
+4. **Launch Neovim** (steps 5-7 above)
+
+### What Gets Installed
+
+The install script manages Neovim-specific dependencies via Homebrew and mise:
+
+**Installed via script (via mise and npm/pip):**
+- Neovim 0.11.3 (via mise)
+- Python 3.12 (via mise) with pynvim
+- Node.js LTS (via mise) with neovim npm package
+- Julia (via mise, required by Mason)
+- Formatters (via mise): black, prettier, stylua, shfmt, yamlfmt, jq, taplo, gofumpt
+- Linters (via mise): shellcheck, yamllint, ruff
+- Language servers: lua-language-server, gopls, rust-analyzer, pyright (brew), TypeScript/YAML/Bash/HTML/CSS/JSON (npm)
+- Tools (via mise): tree-sitter
+- Additional tools (via brew): sops, catimg, eslint, cpplint, yamlfix, flake8
+- Additional tools (via npm): mcp-hub, vscode-langservers-extracted
+
+**Not included** (install manually from Prerequisites section):
+- Git (required by script itself)
+- ripgrep, fd, lazygit (optional but recommended for best experience)
+- Nerd Fonts (required for icons)
+- Build tools: make, gcc, xclip (required for compilation and clipboard)
+- Optional: rust, go, lua (for additional language support)
+- Optional: terraform, helm, kubectl (if doing DevOps work)
+
+The script is designed to work standalone or integrate with a broader dotfiles system. It uses Homebrew and mise to manage Neovim-specific dependencies while keeping system-level tools separate.
 
 ## 🎯 Quick Start Guide
 
@@ -415,10 +477,10 @@ xclip -selection clipboard -o
 - **breadcrumbs.nvim** - Code context breadcrumbs
 - **nvim-navic** - LSP symbol context
 - **which-key.nvim** - Keybinding hints
-- **snacks.nvim** - Notifications, terminals, zen mode
+- **snacks.nvim** - Notifications, terminals, pickers, zen mode
 
 ### Editor
-- **telescope.nvim** - Fuzzy finder
+- **telescope.nvim** - Minimal config (dependency for telekasten)
 - **mini.nvim** - Swiss army knife (surround, pairs, comment, etc.)
 - **conform.nvim** - Formatting
 - **gitsigns.nvim** - Git integration
@@ -452,6 +514,19 @@ local colorscheme = "base16-gruvbox-dark-pale"  -- Change this line
 ```
 
 Available schemes: `darkplus`, `badwolf`, `base16-*`, `catppuccin`, `gruvbox`, `tokyonight`
+
+### Switching Pickers (Snacks vs Telescope)
+
+By default, this configuration uses **snacks.nvim picker** for fuzzy finding. Telescope is included but minimal (used only as a dependency for telekasten).
+
+**To switch back to Telescope:**
+1. Edit `lua/user/plugins/snacks.lua` - comment out the picker keybindings
+2. Edit `lua/user/plugins/telescope.lua` - uncomment the keybindings at the bottom
+
+**Why Snacks picker?**
+- Faster startup (integrated with snacks.nvim)
+- Consistent with other snacks features (terminal, lazygit, etc.)
+- Telescope is still available via `:Telescope` commands if needed
 
 ### Adding a New Language Server
 
@@ -533,6 +608,11 @@ vim.keymap.set('n', '<leader>xx', '<cmd>YourCommand<CR>', { desc = 'Description'
 :checkhealth lazy " Diagnose plugin issues
 ```
 
+### Picker not working
+- Snacks picker should work by default
+- If issues occur, try Telescope: `:Telescope buffers`, `:Telescope find_files`
+- Check `:checkhealth snacks` and `:checkhealth telescope`
+
 ### Mason installation failures
 - Check `:checkhealth mason` for missing dependencies
 - Ensure `node`, `go`, `python3` are installed
@@ -545,7 +625,8 @@ vim.keymap.set('n', '<leader>xx', '<cmd>YourCommand<CR>', { desc = 'Description'
 - **Lua guide:** `:help lua-guide`
 - **LSP:** `:help lsp`
 - **Keymaps:** Press `<Space>` and wait for which-key popup
-- **Telescope help:** `:Telescope help_tags`
+- **Snacks help:** `:help snacks.nvim`
+- **Telescope help:** `:Telescope help_tags` (if using Telescope)
 - **Kickstart.nvim documentation:** Many of the base concepts and configurations come from Kickstart.nvim, whose documentation and comments are invaluable for understanding Neovim configuration
 
 ## 🤝 Contributing
