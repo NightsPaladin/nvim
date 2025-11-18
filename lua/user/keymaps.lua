@@ -85,7 +85,7 @@ keymap("n", "<S-l>", ":bnext<CR>", opts)
 keymap("n", "<S-h>", ":bprevious<CR>", opts)
 
 -- Close current buffer with Shift+q
-keymap("n", "<S-q>", "<cmd>bdelete<CR>", opts)
+-- keymap("n", "<S-q>", "<cmd>bdelete<CR>", opts)
 
 -- Quick switch to alternate buffer (like Alt+Tab for files)
 keymap("n", "<C-tab>", "<C-6>", opts)

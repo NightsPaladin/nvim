@@ -713,6 +713,13 @@ return {
       end,
       desc = "[F]ind [C]ommands",
     },
+
+    -- Bufdelete
+    {
+      "<S-q>",
+      function() Snacks.bufdelete() end,
+      desc = "Close/Delete Buffer",
+    },
   },
 
   init = function()
