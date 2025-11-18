@@ -151,9 +151,13 @@ return {
       },
 
       view = {
-        width = "40%",
+        width = {
+          min = "25%",
+          max = -1,
+          padding = 1,
+        },
         side = "left",
-        preserve_window_proportions = false,
+        preserve_window_proportions = true,
         number = false,
         relativenumber = true,
         signcolumn = "yes",
