@@ -126,14 +126,14 @@ return {
   keys = {
     -- ==================== Terminal Keymaps (replaces toggleterm) ====================
     -- Per-directory terminals: Each directory gets its own set of terminals
-    -- <Leader>1 - Horizontal terminal (per directory)
-    -- <Leader>2 - Vertical terminal (per directory)
-    -- <Leader>3 - Float terminal (per directory)
+    -- <Leader>t1 - Horizontal terminal (per directory)
+    -- <Leader>t2 - Vertical terminal (per directory)
+    -- <Leader>t3 - Float terminal (per directory)
     -- <C-\> - Toggle last used terminal
 
     -- Horizontal terminal per directory
     {
-      "<leader>1",
+      "<leader>t1",
       function()
         -- Check if we're already in one of our managed terminals
         local current_buf = vim.api.nvim_get_current_buf()
@@ -199,13 +199,13 @@ return {
           vim.cmd("startinsert")
         end
       end,
-      desc = "Terminal (horizontal, per-directory)",
+      desc = "[T]oggle Terminal (horizontal) [1]",
       mode = { "n", "t" },
     },
 
     -- Vertical terminal per directory
     {
-      "<leader>2",
+      "<leader>t2",
       function()
         -- Check if we're already in one of our managed terminals
         local current_buf = vim.api.nvim_get_current_buf()
@@ -271,13 +271,13 @@ return {
           vim.cmd("startinsert")
         end
       end,
-      desc = "Terminal (vertical, per-directory)",
+      desc = "[T]oggle Terminal (vertical) [2]",
       mode = { "n", "t" },
     },
 
     -- Float terminal per directory
     {
-      "<leader>3",
+      "<leader>t3",
       function()
         -- Check if we're already in one of our managed terminals
         local current_buf = vim.api.nvim_get_current_buf()
@@ -351,7 +351,7 @@ return {
           vim.cmd("startinsert")
         end
       end,
-      desc = "Terminal (float, per-directory)",
+      desc = "[T]oggle Terminal (float) [3]",
       mode = { "n", "t" },
     },
 

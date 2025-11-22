@@ -110,12 +110,16 @@ return {
       end,
     })
 
-    -- Trailing whitespace highlighting and removal
-    -- <leader>cw to clean whitespace
-    require("mini.trailspace").setup({})
-    vim.keymap.set("n", "<leader>cw", function()
-      require("mini.trailspace").trim()
-    end, { desc = "[C]lean [W]hitespace" })
+      -- Trailing whitespace highlighting and removal
+      -- <leader>cw to clean whitespace
+      require("mini.trailspace").setup({})
+      vim.keymap.set("n", "<leader>cw", function()
+        require("mini.trailspace").trim()
+      end, { desc = "[C]lean [W]hitespace" })
+
+      -- Enable inline diffs for plugins like CodeCompanion
+      require("mini.diff").setup({})
+
 
     -- ==================== Disabled: Using lualine instead ====================
     -- Uncomment if you want to use mini.statusline instead of lualine
