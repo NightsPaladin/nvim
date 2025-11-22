@@ -2,6 +2,107 @@
 -- Comprehensive snacks.nvim configuration
 -- Replaces: toggleterm, lazygit, and Telescope
 
+-- ============================================================================
+-- Helper function for terminal management
+-- ============================================================================
+
+---Toggle a terminal in the specified direction
+---@param direction "horizontal" | "vertical" | "float"
+local function toggle_terminal(direction)
+  -- Check if we're already in one of our managed terminals
+  local current_buf = vim.api.nvim_get_current_buf()
+  local current_win = vim.api.nvim_get_current_win()
+
+  -- Check if current buffer is a managed terminal
+  for key, buf in pairs(_G.snacks_terminals) do
+    if buf == current_buf and key:match("^" .. direction .. "_") then
+      -- We're in the terminal, just close the window
+      vim.api.nvim_win_close(current_win, true)
+      return
+    end
+  end
+
+  -- Not in a terminal, so open/toggle one
+  local dir = vim.fn.expand("%:p:h")
+  -- Fallback to cwd if current buffer has no valid directory
+  if dir == "" or vim.fn.isdirectory(dir) == 0 then
+    dir = vim.fn.getcwd()
+  end
+  local key = direction .. "_" .. dir
+
+  -- Get or create terminal instance
+  if not _G.snacks_terminals[key] or not vim.api.nvim_buf_is_valid(_G.snacks_terminals[key]) then
+    _G.snacks_terminals[key] = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_call(_G.snacks_terminals[key], function()
+      vim.fn.jobstart(vim.o.shell, {
+        term = true,
+        cwd = dir,
+        on_exit = function()
+          -- Close all windows displaying this terminal buffer
+          local wins = vim.fn.win_findbuf(_G.snacks_terminals[key])
+          for _, win in ipairs(wins) do
+            if vim.api.nvim_win_is_valid(win) then
+              vim.api.nvim_win_close(win, true)
+            end
+          end
+          -- Clean up the buffer reference
+          _G.snacks_terminals[key] = nil
+        end,
+      })
+    end)
+  end
+
+  -- Open/toggle the terminal with proper window config
+  local buf = _G.snacks_terminals[key]
+  local wins = vim.fn.win_findbuf(buf)
+
+  if #wins > 0 then
+    -- Terminal is visible, close it
+    vim.api.nvim_win_close(wins[1], true)
+    return
+  end
+
+  -- Create window based on direction
+  local win
+  if direction == "horizontal" then
+    vim.cmd("botright split")
+    win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(win, buf)
+    vim.api.nvim_win_set_height(win, math.floor(vim.o.lines * 0.2))
+    vim.wo[win].winfixheight = true
+  elseif direction == "vertical" then
+    vim.cmd("botright vsplit")
+    win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(win, buf)
+    vim.api.nvim_win_set_width(win, math.floor(vim.o.columns * 0.4))
+    vim.wo[win].winfixwidth = true
+  else -- float
+    local width = math.floor(vim.o.columns * 0.9)
+    local height = math.floor(vim.o.lines * 0.9)
+    local col = math.floor((vim.o.columns - width) / 2)
+    local row = math.floor((vim.o.lines - height) / 2)
+
+    win = vim.api.nvim_open_win(buf, true, {
+      relative = "editor",
+      width = width,
+      height = height,
+      col = col,
+      row = row,
+      style = "minimal",
+      border = "rounded",
+    })
+  end
+
+  -- Disable line numbers in terminal
+  vim.wo[win].number = false
+  vim.wo[win].relativenumber = false
+  vim.cmd("startinsert")
+end
+
+-- ============================================================================
+-- Plugin Configuration
+-- ============================================================================
+
 return {
   "folke/snacks.nvim",
   priority = 1000,
@@ -135,69 +236,7 @@ return {
     {
       "<leader>t1",
       function()
-        -- Check if we're already in one of our managed terminals
-        local current_buf = vim.api.nvim_get_current_buf()
-        local current_win = vim.api.nvim_get_current_win()
-
-        -- Check if current buffer is a managed terminal
-        for key, buf in pairs(_G.snacks_terminals) do
-          if buf == current_buf and key:match("^horizontal_") then
-            -- We're in the terminal, just close the window
-            vim.api.nvim_win_close(current_win, true)
-            return
-          end
-        end
-
-        -- Not in a terminal, so open/toggle one
-        local dir = vim.fn.expand("%:p:h")
-        -- Fallback to cwd if current buffer has no valid directory
-        if dir == "" or vim.fn.isdirectory(dir) == 0 then
-          dir = vim.fn.getcwd()
-        end
-        local key = "horizontal_" .. dir
-
-        -- Get or create terminal instance
-        if not _G.snacks_terminals[key] or not vim.api.nvim_buf_is_valid(_G.snacks_terminals[key]) then
-          _G.snacks_terminals[key] = vim.api.nvim_create_buf(false, true)
-          vim.api.nvim_buf_call(_G.snacks_terminals[key], function()
-            vim.fn.jobstart(vim.o.shell, {
-              term = true,
-              cwd = dir,
-              on_exit = function()
-                -- Close all windows displaying this terminal buffer
-                local wins = vim.fn.win_findbuf(_G.snacks_terminals[key])
-                for _, win in ipairs(wins) do
-                  if vim.api.nvim_win_is_valid(win) then
-                    vim.api.nvim_win_close(win, true)
-                  end
-                end
-                -- Clean up the buffer reference
-                _G.snacks_terminals[key] = nil
-              end,
-            })
-          end)
-        end
-
-        -- Open/toggle the terminal with proper window config
-        local buf = _G.snacks_terminals[key]
-        local wins = vim.fn.win_findbuf(buf)
-
-        if #wins > 0 then
-          -- Terminal is visible, close it
-          vim.api.nvim_win_close(wins[1], true)
-        else
-          -- Open terminal in horizontal split
-          vim.cmd("botright split")
-          local win = vim.api.nvim_get_current_win()
-          vim.api.nvim_win_set_buf(win, buf)
-          vim.api.nvim_win_set_height(win, math.floor(vim.o.lines * 0.2))
-          -- Disable line numbers in terminal
-          vim.wo[win].number = false
-          vim.wo[win].relativenumber = false
-          -- Fix height to prevent resize events from changing it
-          vim.wo[win].winfixheight = true
-          vim.cmd("startinsert")
-        end
+        toggle_terminal("horizontal")
       end,
       desc = "[T]oggle Terminal (horizontal) [1]",
       mode = { "n", "t" },
@@ -207,69 +246,7 @@ return {
     {
       "<leader>t2",
       function()
-        -- Check if we're already in one of our managed terminals
-        local current_buf = vim.api.nvim_get_current_buf()
-        local current_win = vim.api.nvim_get_current_win()
-
-        -- Check if current buffer is a managed terminal
-        for key, buf in pairs(_G.snacks_terminals) do
-          if buf == current_buf and key:match("^vertical_") then
-            -- We're in the terminal, just close the window
-            vim.api.nvim_win_close(current_win, true)
-            return
-          end
-        end
-
-        -- Not in a terminal, so open/toggle one
-        local dir = vim.fn.expand("%:p:h")
-        -- Fallback to cwd if current buffer has no valid directory
-        if dir == "" or vim.fn.isdirectory(dir) == 0 then
-          dir = vim.fn.getcwd()
-        end
-        local key = "vertical_" .. dir
-
-        -- Get or create terminal instance
-        if not _G.snacks_terminals[key] or not vim.api.nvim_buf_is_valid(_G.snacks_terminals[key]) then
-          _G.snacks_terminals[key] = vim.api.nvim_create_buf(false, true)
-          vim.api.nvim_buf_call(_G.snacks_terminals[key], function()
-            vim.fn.jobstart(vim.o.shell, {
-              term = true,
-              cwd = dir,
-              on_exit = function()
-                -- Close all windows displaying this terminal buffer
-                local wins = vim.fn.win_findbuf(_G.snacks_terminals[key])
-                for _, win in ipairs(wins) do
-                  if vim.api.nvim_win_is_valid(win) then
-                    vim.api.nvim_win_close(win, true)
-                  end
-                end
-                -- Clean up the buffer reference
-                _G.snacks_terminals[key] = nil
-              end,
-            })
-          end)
-        end
-
-        -- Open/toggle the terminal with proper window config
-        local buf = _G.snacks_terminals[key]
-        local wins = vim.fn.win_findbuf(buf)
-
-        if #wins > 0 then
-          -- Terminal is visible, close it
-          vim.api.nvim_win_close(wins[1], true)
-        else
-          -- Open terminal in vertical split
-          vim.cmd("botright vsplit")
-          local win = vim.api.nvim_get_current_win()
-          vim.api.nvim_win_set_buf(win, buf)
-          vim.api.nvim_win_set_width(win, math.floor(vim.o.columns * 0.4))
-          -- Disable line numbers in terminal
-          vim.wo[win].number = false
-          vim.wo[win].relativenumber = false
-          -- Fix width to prevent resize events from changing it
-          vim.wo[win].winfixwidth = true
-          vim.cmd("startinsert")
-        end
+        toggle_terminal("vertical")
       end,
       desc = "[T]oggle Terminal (vertical) [2]",
       mode = { "n", "t" },
@@ -279,77 +256,7 @@ return {
     {
       "<leader>t3",
       function()
-        -- Check if we're already in one of our managed terminals
-        local current_buf = vim.api.nvim_get_current_buf()
-        local current_win = vim.api.nvim_get_current_win()
-
-        -- Check if current buffer is a managed terminal
-        for key, buf in pairs(_G.snacks_terminals) do
-          if buf == current_buf and key:match("^float_") then
-            -- We're in the terminal, just close the window
-            vim.api.nvim_win_close(current_win, true)
-            return
-          end
-        end
-
-        -- Not in a terminal, so open/toggle one
-        local dir = vim.fn.expand("%:p:h")
-        -- Fallback to cwd if current buffer has no valid directory
-        if dir == "" or vim.fn.isdirectory(dir) == 0 then
-          dir = vim.fn.getcwd()
-        end
-        local key = "float_" .. dir
-
-        -- Get or create terminal instance
-        if not _G.snacks_terminals[key] or not vim.api.nvim_buf_is_valid(_G.snacks_terminals[key]) then
-          _G.snacks_terminals[key] = vim.api.nvim_create_buf(false, true)
-          vim.api.nvim_buf_call(_G.snacks_terminals[key], function()
-            vim.fn.jobstart(vim.o.shell, {
-              term = true,
-              cwd = dir,
-              on_exit = function()
-                -- Close all windows displaying this terminal buffer
-                local wins = vim.fn.win_findbuf(_G.snacks_terminals[key])
-                for _, win in ipairs(wins) do
-                  if vim.api.nvim_win_is_valid(win) then
-                    vim.api.nvim_win_close(win, true)
-                  end
-                end
-                -- Clean up the buffer reference
-                _G.snacks_terminals[key] = nil
-              end,
-            })
-          end)
-        end
-
-        -- Open/toggle the terminal with proper window config
-        local buf = _G.snacks_terminals[key]
-        local wins = vim.fn.win_findbuf(buf)
-
-        if #wins > 0 then
-          -- Terminal is visible, close it
-          vim.api.nvim_win_close(wins[1], true)
-        else
-          -- Open terminal in floating window
-          local width = math.floor(vim.o.columns * 0.9)
-          local height = math.floor(vim.o.lines * 0.9)
-          local col = math.floor((vim.o.columns - width) / 2)
-          local row = math.floor((vim.o.lines - height) / 2)
-
-          local win = vim.api.nvim_open_win(buf, true, {
-            relative = "editor",
-            width = width,
-            height = height,
-            col = col,
-            row = row,
-            style = "minimal",
-            border = "rounded",
-          })
-          -- Disable line numbers in terminal
-          vim.wo[win].number = false
-          vim.wo[win].relativenumber = false
-          vim.cmd("startinsert")
-        end
+        toggle_terminal("float")
       end,
       desc = "[T]oggle Terminal (float) [3]",
       mode = { "n", "t" },
@@ -717,7 +624,9 @@ return {
     -- Bufdelete
     {
       "<S-q>",
-      function() Snacks.bufdelete() end,
+      function()
+        Snacks.bufdelete()
+      end,
       desc = "Close/Delete Buffer",
     },
   },

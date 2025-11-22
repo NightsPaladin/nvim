@@ -64,10 +64,10 @@ keymap("t", "<C-l>", [[<C-\><C-n><C-w>l]], { desc = "Move to right window from t
 -- Use Leader + Arrow keys to resize splits
 -- Up/Down changes height, Left/Right changes width
 
-keymap("n", "<leader><Up>", ":resize +5<CR>", { desc = "Increase window height", silent = true })
-keymap("n", "<leader><Down>", ":resize -5<CR>", { desc = "Decrease window height", silent = true })
-keymap("n", "<leader><Left>", ":vertical resize -5<CR>", { desc = "Decrease window width", silent = true })
-keymap("n", "<leader><Right>", ":vertical resize +5<CR>", { desc = "Increase window width", silent = true })
+keymap("n", "<leader><Up>", "<cmd>resize +5<CR>", { desc = "Increase window height", silent = true })
+keymap("n", "<leader><Down>", "<cmd>resize -5<CR>", { desc = "Decrease window height", silent = true })
+keymap("n", "<leader><Left>", "<cmd>vertical resize -5<CR>", { desc = "Decrease window width", silent = true })
+keymap("n", "<leader><Right>", "<cmd>vertical resize +5<CR>", { desc = "Increase window width", silent = true })
 
 -- NOTE: Window movement commands disabled (terminal compatibility issues)
 -- If your terminal supports these, you can uncomment:
@@ -81,8 +81,8 @@ keymap("n", "<leader><Right>", ":vertical resize +5<CR>", { desc = "Increase win
 -- ============================================================================
 
 -- Cycle through buffers with Shift+hl
-keymap("n", "<S-l>", ":bnext<CR>", opts)
-keymap("n", "<S-h>", ":bprevious<CR>", opts)
+keymap("n", "<S-l>", "<cmd>bnext<CR>", opts)
+keymap("n", "<S-h>", "<cmd>bprevious<CR>", opts)
 
 -- Close current buffer with Shift+q
 -- keymap("n", "<S-q>", "<cmd>bdelete<CR>", opts)
@@ -153,7 +153,9 @@ vim.cmd([[:amenu 10.100 mousemenu.Goto\ Definition <cmd>lua vim.lsp.buf.definiti
 vim.cmd([[:amenu 10.110 mousemenu.References <cmd>lua vim.lsp.buf.references()<CR>]])
 
 keymap("n", "<RightMouse>", "<cmd>:popup mousemenu<CR>")
-keymap("n", "<Tab>", "<cmd>:popup mousemenu<CR>")
+-- NOTE: Tab keymap commented out to avoid conflicts with completion/snippets
+-- Uncomment if you want Tab to also open the mouse menu
+-- keymap("n", "<Tab>", "<cmd>:popup mousemenu<CR>")
 
 -- ============================================================================
 -- Disabled/Alternative Keymaps

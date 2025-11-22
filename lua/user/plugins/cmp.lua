@@ -43,13 +43,19 @@ return { -- Autocompletion
         local ok, ls = pcall(require, "luasnip")
         if ok then
           -- Make CodeCompanion buffers use markdown snippets
-          pcall(function() ls.filetype_extend("codecompanion", { "markdown" }) end)
+          pcall(function()
+            ls.filetype_extend("codecompanion", { "markdown" })
+          end)
           local map = vim.keymap.set
           map({ "i", "s" }, "<C-n>", function()
-            if ls.choice_active() then ls.change_choice(1) end
+            if ls.choice_active() then
+              ls.change_choice(1)
+            end
           end, { desc = "LuaSnip choice next" })
           map({ "i", "s" }, "<C-p>", function()
-            if ls.choice_active() then ls.change_choice(-1) end
+            if ls.choice_active() then
+              ls.change_choice(-1)
+            end
           end, { desc = "LuaSnip choice prev" })
         end
       end,
@@ -87,9 +93,10 @@ return { -- Autocompletion
       ["<Tab>"] = { "snippet_forward", "select_next", "fallback" },
       ["<C-k>"] = { "select_prev", "fallback" },
       ["<C-j>"] = { "select_next", "fallback" },
+      -- Both <CR> and <C-y> accept completion
+      -- <CR> is familiar from most editors, <C-y> is Vim's traditional accept key
       ["<CR>"] = { "accept", "fallback" },
       ["<C-y>"] = { "accept", "fallback" },
-
 
       ["<S-k>"] = { "scroll_documentation_up", "fallback" },
       ["<S-j>"] = { "scroll_documentation_down", "fallback" },

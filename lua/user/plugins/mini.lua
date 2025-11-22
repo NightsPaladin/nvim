@@ -46,12 +46,12 @@ return {
         },
       },
     })
-    -- Disable backtick pairing in markdown files
+
+    -- Disable mini.pairs in markdown and codecompanion buffers
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = "markdown",
+      pattern = { "markdown", "codecompanion" },
       callback = function()
-        -- Disable backtick auto-pairing in markdown
-        vim.keymap.set("i", "`", "`", { buffer = true })
+        vim.b.minipairs_disable = true
       end,
     })
 
@@ -110,16 +110,34 @@ return {
       end,
     })
 
-      -- Trailing whitespace highlighting and removal
-      -- <leader>cw to clean whitespace
-      require("mini.trailspace").setup({})
-      vim.keymap.set("n", "<leader>cw", function()
-        require("mini.trailspace").trim()
-      end, { desc = "[C]lean [W]hitespace" })
+    -- Trailing whitespace highlighting and removal
+    -- <leader>cw to clean whitespace
+    require("mini.trailspace").setup({})
+    vim.keymap.set("n", "<leader>cw", function()
+      require("mini.trailspace").trim()
+    end, { desc = "[C]lean [W]hitespace" })
 
-      -- Enable inline diffs for plugins like CodeCompanion
-      require("mini.diff").setup({})
-
+    -- Enable inline diffs for plugins like CodeCompanion
+    require("mini.diff").setup({
+      view = {
+        style = "sign", -- Show changes in sign column
+        signs = { add = "▎", change = "▎", delete = "▎" },
+      },
+      -- Mappings for working with diff hunks
+      mappings = {
+        apply = "gh", -- Apply hunk under cursor
+        reset = "gH", -- Reset hunk under cursor
+        textobject = "gh", -- Select hunk as text object
+        goto_first = "[H", -- Go to first hunk
+        goto_prev = "[h", -- Go to previous hunk
+        goto_next = "]h", -- Go to next hunk
+        goto_last = "]H", -- Go to last hunk
+      },
+      options = {
+        algorithm = "histogram", -- Better diff algorithm
+        indent_heuristic = true, -- Improve diff readability
+      },
+    })
 
     -- ==================== Disabled: Using lualine instead ====================
     -- Uncomment if you want to use mini.statusline instead of lualine

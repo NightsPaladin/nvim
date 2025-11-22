@@ -12,10 +12,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = vim.api.nvim_create_augroup("format-options", { clear = true }),
   callback = function()
-    vim.cmd("set formatoptions-=cro")
-    vim.cmd("set formatoptions+=j")
+    vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+    vim.opt_local.formatoptions:append("j")
   end,
 })
 
@@ -34,7 +35,6 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     "DressingSelect",
     "tsplayground",
     "checkhealth",
-    "qf",
     "",
   },
   callback = function()
@@ -44,8 +44,6 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     ]])
   end,
 })
-
-local opts = { noremap = true, silent = true }
 
 -- ============================================================================
 -- Auto-close Quickfix after selection
@@ -132,9 +130,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
       -- Set width to exactly 80 (since we disabled line numbers and signs)
       vim.api.nvim_win_set_width(winid, 80)
-
-      -- Optional: Set a minimum width so it doesn't get squished
-      vim.api.nvim_win_set_width(winid, 80)
+      vim.wo[winid].winfixwidth = true -- Prevent accidental resize
     end)
   end,
 })
