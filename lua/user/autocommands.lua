@@ -23,19 +23,11 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 -- quit these types of buffers with 'q'
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = {
-    "netrw",
-    "Jaq",
-    "git",
-    "help",
-    "man",
-    "lspinfo",
-    "oil",
-    "spectre_panel",
-    "lir",
-    "DressingSelect",
-    "tsplayground",
     "checkhealth",
-    "",
+    "help",
+    "lspinfo",
+    "man",
+    "notify",
   },
   callback = function()
     vim.cmd([[
