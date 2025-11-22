@@ -174,6 +174,8 @@ return {
         callback = function()
           vim.opt_local.relativenumber = false
           vim.opt_local.number = false
+          -- Fix window width to prevent resize events from changing it
+          vim.wo.winfixwidth = true
           -- Register buffer-local keybindings with which-key
           local ok, wk = pcall(require, "which-key")
           if ok then

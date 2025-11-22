@@ -49,6 +49,7 @@ return {
         },
         grep = {
           hidden = true, -- Search in hidden files
+          follow = true, -- Follow symlinks
         },
         buffers = {
           -- Custom keymaps for the buffers picker
@@ -189,10 +190,12 @@ return {
           vim.cmd("botright split")
           local win = vim.api.nvim_get_current_win()
           vim.api.nvim_win_set_buf(win, buf)
-          vim.api.nvim_win_set_height(win, math.floor(vim.o.lines * 0.3))
+          vim.api.nvim_win_set_height(win, math.floor(vim.o.lines * 0.2))
           -- Disable line numbers in terminal
           vim.wo[win].number = false
           vim.wo[win].relativenumber = false
+          -- Fix height to prevent resize events from changing it
+          vim.wo[win].winfixheight = true
           vim.cmd("startinsert")
         end
       end,
@@ -263,6 +266,8 @@ return {
           -- Disable line numbers in terminal
           vim.wo[win].number = false
           vim.wo[win].relativenumber = false
+          -- Fix width to prevent resize events from changing it
+          vim.wo[win].winfixwidth = true
           vim.cmd("startinsert")
         end
       end,
@@ -707,6 +712,13 @@ return {
         Snacks.picker.commands()
       end,
       desc = "[F]ind [C]ommands",
+    },
+
+    -- Bufdelete
+    {
+      "<S-q>",
+      function() Snacks.bufdelete() end,
+      desc = "Close/Delete Buffer",
     },
   },
 
