@@ -66,6 +66,17 @@ return {
     },
     cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
     opts = {
+      adapters = {
+        http = {
+          ollama = function()
+            return require("codecompanion.adapters").extend("openai_compatible", {
+              env = {
+                url = "http://localhost:1234", -- LM Studio default port
+              },
+            })
+          end,
+        },
+      },
       -- Default adapter: "copilot" (uses your GitHub Copilot subscription)
       -- No API keys required
       strategies = {
