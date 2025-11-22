@@ -155,17 +155,5 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = "FileTypeConfig",
 })
 
--- Highlight the border of the active window
-vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
-  callback = function()
-    vim.opt_local.winhighlight = "Normal:Normal,NormalNC:NormalNC"
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
-  callback = function()
-    vim.opt_local.winhighlight = "Normal:NormalNC,NormalNC:NormalNC"
-  end,
-})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
