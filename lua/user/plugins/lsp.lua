@@ -122,7 +122,6 @@ return {
         map("<leader>cj", function()
           vim.diagnostic.jump({ count = 1, float = true })
         end, "Goto Next Diagnostic")
-
         map("<leader>ck", function()
           vim.diagnostic.jump({ count = -1, float = true })
         end, "Goto Previous Diagnostic")
@@ -149,22 +148,18 @@ return {
         --
         -- When you move your cursor, the highlights will be cleared (the second autocommand).
         local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if
-          client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
-        then
+        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
           local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
           vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
             buffer = event.buf,
             group = highlight_augroup,
             callback = vim.lsp.buf.document_highlight,
           })
-
           vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
             buffer = event.buf,
             group = highlight_augroup,
             callback = vim.lsp.buf.clear_references,
           })
-
           vim.api.nvim_create_autocmd("LspDetach", {
             group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
             callback = function(event2)
@@ -354,6 +349,64 @@ return {
           },
         },
       },
+
+      -- NEW: Bash/Shell LSP
+      bashls = {
+        filetypes = { "sh", "bash", "zsh" },
+      },
+
+      -- NEW: Docker LSP
+      dockerls = {},
+
+      -- NEW: Docker Compose LSP
+      docker_compose_language_service = {},
+
+      -- NEW: Terraform LSP (if you use Terraform)
+      terraformls = {},
+
+      -- NEW: TypeScript/JavaScript LSP (for web dev)
+      ts_ls = {
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            },
+          },
+          javascript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            },
+          },
+        },
+      },
+
+      -- NEW: HTML LSP (for web dev)
+      html = {},
+
+      -- NEW: CSS LSP (for web dev)
+      cssls = {},
+
+      -- NEW: ESLint LSP (for JS/TS linting)
+      eslint = {
+        settings = {
+          workingDirectories = { mode = "auto" },
+        },
+      },
+
+      -- NEW: Helm LSP (already in your tools, adding config)
+      helm_ls = {},
     }
 
     -- Ensure the servers and tools above are installed
@@ -378,22 +431,37 @@ return {
       "impl",
       "delve",
 
-      -- Python formatters/tools (pyright comes from servers table automatically)
+      -- Python tools
       "black",
       "isort",
       "debugpy",
-      "ruff", -- Optional but recommended
+      "ruff",
 
-      "stylua", -- Used to format Lua code
+      -- Lua tools
+      "stylua",
+
+      -- Shell/Bash tools
       "shellcheck",
       "shfmt",
+
+      -- YAML/Kubernetes tools
       "ansible-lint",
       "kube-linter",
       "yamllint",
       "yamlfmt",
-      "helm-ls",
+
+      -- Terraform tools (if you use it)
       "hclfmt",
+      "tflint",
+
+      -- Docker tools
+      "hadolint", -- NEW: Dockerfile linter
+
+      -- Web dev tools
+      "prettier", -- NEW: Universal formatter for JS/TS/HTML/CSS/JSON
+      "js-debug-adapter", -- NEW: JavaScript/TypeScript debugger
     })
+
     require("mason-tool-installer").setup({
       ensure_installed = ensure_installed,
       auto_update = false,
