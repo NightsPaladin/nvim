@@ -118,26 +118,76 @@ return {
     end, { desc = "[C]lean [W]hitespace" })
 
     -- Enable inline diffs for plugins like CodeCompanion
+    -- Git hunk operations: ghs (stage), ghr (reset), ]h/[h (navigate)
     require("mini.diff").setup({
       view = {
         style = "sign", -- Show changes in sign column
         signs = { add = "▎", change = "▎", delete = "▎" },
       },
-      -- Mappings for working with diff hunks
       mappings = {
-        apply = "gh", -- Apply hunk under cursor
-        reset = "gH", -- Reset hunk under cursor
-        textobject = "gh", -- Select hunk as text object
-        goto_first = "[H", -- Go to first hunk
-        goto_prev = "[h", -- Go to previous hunk
-        goto_next = "]h", -- Go to next hunk
-        goto_last = "]H", -- Go to last hunk
+        apply = "ghs",      -- [G]it [H]unk [S]tage
+        reset = "ghr",      -- [G]it [H]unk [R]eset
+        textobject = "ih",  -- [I]nner [H]unk text object (use with operators like dih, vih)
+        goto_first = "[H",  -- Go to first hunk
+        goto_prev = "[h",   -- Go to previous hunk
+        goto_next = "]h",   -- Go to next hunk
+        goto_last = "]H",   -- Go to last hunk
       },
       options = {
         algorithm = "histogram", -- Better diff algorithm
         indent_heuristic = true, -- Improve diff readability
       },
     })
+
+    -- Toggle overlay view to see inline diff (old lines shown with red/green highlighting)
+    vim.keymap.set("n", "<leader>go", function()
+      require("mini.diff").toggle_overlay(0)
+    end, { desc = "Toggle [G]it [O]verlay diff" })
+
+    -- Compare against different git references
+    -- These show what the file looked like at different commits
+    vim.keymap.set("n", "<leader>g0", function()
+      local diff = require("mini.diff")
+      diff.disable(0)
+      diff.enable(0)
+      vim.notify("Comparing current buffer against: HEAD (default)")
+    end, { desc = "Diff against HEAD" })
+
+    vim.keymap.set("n", "<leader>g1", function()
+      local diff = require("mini.diff")
+      local filepath = vim.fn.expand("%:.")
+      local content = vim.fn.system("git show HEAD~1:" .. filepath)
+      if vim.v.shell_error == 0 then
+        diff.set_ref_text(0, vim.split(content, "\n"))
+        vim.notify("Comparing HEAD against: HEAD~1")
+      else
+        vim.notify("Error: Could not get file at HEAD~1", vim.log.levels.ERROR)
+      end
+    end, { desc = "Diff HEAD vs HEAD~1" })
+
+    vim.keymap.set("n", "<leader>g2", function()
+      local diff = require("mini.diff")
+      local filepath = vim.fn.expand("%:.")
+      local content = vim.fn.system("git show HEAD~2:" .. filepath)
+      if vim.v.shell_error == 0 then
+        diff.set_ref_text(0, vim.split(content, "\n"))
+        vim.notify("Comparing HEAD against: HEAD~2")
+      else
+        vim.notify("Error: Could not get file at HEAD~2", vim.log.levels.ERROR)
+      end
+    end, { desc = "Diff HEAD vs HEAD~2" })
+
+    vim.keymap.set("n", "<leader>g3", function()
+      local diff = require("mini.diff")
+      local filepath = vim.fn.expand("%:.")
+      local content = vim.fn.system("git show HEAD~3:" .. filepath)
+      if vim.v.shell_error == 0 then
+        diff.set_ref_text(0, vim.split(content, "\n"))
+        vim.notify("Comparing HEAD against: HEAD~3")
+      else
+        vim.notify("Error: Could not get file at HEAD~3", vim.log.levels.ERROR)
+      end
+    end, { desc = "Diff HEAD vs HEAD~3" })
 
     -- ==================== Disabled: Using lualine instead ====================
     -- Uncomment if you want to use mini.statusline instead of lualine
