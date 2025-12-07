@@ -3,43 +3,43 @@
 -- CodeCompanion: Multi-provider AI chat & code actions (Copilot, LM Studio, Anthropic, etc.)
 
 return {
-    -- GitHub Copilot (ghost text, toggleable)
-    {
+  -- GitHub Copilot (ghost text, toggleable)
+  {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     build = ":Copilot auth",
     event = "InsertEnter",
-      opts = {
-        suggestion = {
-          enabled = false, -- Off by default; toggle with <leader>ta
-          auto_trigger = true,
-          hide_during_completion = true,
-          keymap = {
-            accept = "<C-g>",
-            accept_word = false,
-            accept_line = false,
-            next = "<C-]>",
-            prev = "<C-[>",
-            dismiss = "<Esc><Esc>",
-          },
-        },
-        panel = { enabled = false },
-        filetypes = {
-          ["*"] = true,
-          help = false,
-          gitrebase = false,
-          [""] = false,
-          ["."] = false,
-          TelescopePrompt = false,
-          NvimTree = false,
-          ["neo-tree"] = false,
-          Trouble = false,
-          lazy = false,
-          mason = false,
-          ["copilot-chat"] = false,
-          ["codecompanion"] = false,
+    opts = {
+      suggestion = {
+        enabled = false, -- Off by default; toggle with <leader>ta
+        auto_trigger = true,
+        hide_during_completion = true,
+        keymap = {
+          accept = "<C-g>",
+          accept_word = false,
+          accept_line = false,
+          next = "<C-]>",
+          prev = "<C-[>",
+          dismiss = "<Esc><Esc>",
         },
       },
+      panel = { enabled = false },
+      filetypes = {
+        ["*"] = true,
+        help = false,
+        gitrebase = false,
+        [""] = false,
+        ["."] = false,
+        TelescopePrompt = false,
+        NvimTree = false,
+        ["neo-tree"] = false,
+        Trouble = false,
+        lazy = false,
+        mason = false,
+        ["copilot-chat"] = false,
+        ["codecompanion"] = false,
+      },
+    },
     keys = {
       {
         "<leader>ta",
@@ -52,39 +52,39 @@ return {
     },
   },
 
-    -- CodeCompanion: Multi-provider AI chat & code actions (Copilot, LM Studio, Anthropic, etc.)
-    {
+  -- CodeCompanion: Multi-provider AI chat & code actions (Copilot, LM Studio, Anthropic, etc.)
+  {
     "olimorris/codecompanion.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
     },
     cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
-      opts = {
-        adapters = {
-          http = {
-            ollama = function()
-              return require("codecompanion.adapters").extend("openai_compatible", {
-                env = {
-                  url = "http://localhost:1234", -- LM Studio default port
-                },
-              })
-            end,
+    opts = {
+      adapters = {
+        http = {
+          ollama = function()
+            return require("codecompanion.adapters").extend("openai_compatible", {
+              env = {
+                url = "http://localhost:1234", -- LM Studio default port
+              },
+            })
+          end,
+        },
+      },
+      -- Default: Copilot (uses your GitHub Copilot subscription, no API keys required)
+      strategies = {
+        chat = {
+          adapter = "copilot",
+          slash_commands = {
+            ["file"] = { opts = { provider = "snacks", auto_insert = true } },
+            ["buffer"] = { opts = { provider = "snacks", auto_insert = true } },
+            ["help"] = { opts = { provider = "snacks" } },
+            ["symbols"] = { opts = { provider = "snacks" } },
           },
         },
-        -- Default: Copilot (uses your GitHub Copilot subscription, no API keys required)
-        strategies = {
-          chat = {
-            adapter = "copilot",
-            slash_commands = {
-              ["file"] = { opts = { provider = "snacks", auto_insert = true } },
-              ["buffer"] = { opts = { provider = "snacks", auto_insert = true } },
-              ["help"] = { opts = { provider = "snacks" } },
-              ["symbols"] = { opts = { provider = "snacks" } },
-            },
-          },
-          inline = { adapter = "copilot" },
-        },
+        inline = { adapter = "copilot" },
+      },
       -- extensions = {
       --   mcphub = {
       --     callback = "mcphub.extensions.codecompanion",
@@ -115,31 +115,31 @@ return {
         },
       },
     },
-      keys = {
-        -- Main chat interface
-        { "<leader>aa", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat", mode = { "n", "v" } },
-        { "<leader>ax", "<cmd>CodeCompanionChat Add<CR>", desc = "Add to Chat", mode = { "n", "v" } },
-        {
-          "<leader>aq",
-          function()
-            local input = vim.fn.input("Quick Chat: ")
-            if input ~= "" then
-              vim.cmd("CodeCompanionChat " .. input)
-            end
-          end,
-          desc = "Quick Chat",
-          mode = { "n", "v" },
-        },
-        { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions Menu", mode = { "n", "v" } },
-        { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant", mode = "v" },
-        { "<leader>ae", "<cmd>CodeCompanionActions explain<CR>", desc = "Explain Code", mode = "v" },
-        { "<leader>ar", "<cmd>CodeCompanionActions review<CR>", desc = "Review Code", mode = "v" },
-        { "<leader>af", "<cmd>CodeCompanionActions fix<CR>", desc = "Fix Code", mode = "v" },
-        { "<leader>ao", "<cmd>CodeCompanionActions optimize<CR>", desc = "Optimize Code", mode = "v" },
-        { "<leader>ad", "<cmd>CodeCompanionActions docs<CR>", desc = "Add Documentation", mode = "v" },
-        { "<leader>at", "<cmd>CodeCompanionActions tests<CR>", desc = "Generate Tests", mode = "v" },
-        { "<leader>ac", "<cmd>CodeCompanionActions commit<CR>", desc = "Generate Commit Message" },
+    keys = {
+      -- Main chat interface
+      { "<leader>aa", "<cmd>CodeCompanionChat Toggle<CR>", desc = "Toggle Chat", mode = { "n", "v" } },
+      { "<leader>ax", "<cmd>CodeCompanionChat Add<CR>", desc = "Add to Chat", mode = { "n", "v" } },
+      {
+        "<leader>aq",
+        function()
+          local input = vim.fn.input("Quick Chat: ")
+          if input ~= "" then
+            vim.cmd("CodeCompanionChat " .. input)
+          end
+        end,
+        desc = "Quick Chat",
+        mode = { "n", "v" },
       },
+      { "<leader>aC", "<cmd>CodeCompanionActions<CR>", desc = "Actions Menu", mode = { "n", "v" } },
+      { "<leader>aI", "<cmd>CodeCompanion<CR>", desc = "Inline Assistant", mode = "v" },
+      { "<leader>ae", "<cmd>CodeCompanionActions explain<CR>", desc = "Explain Code", mode = "v" },
+      { "<leader>ar", "<cmd>CodeCompanionActions review<CR>", desc = "Review Code", mode = "v" },
+      { "<leader>af", "<cmd>CodeCompanionActions fix<CR>", desc = "Fix Code", mode = "v" },
+      { "<leader>ao", "<cmd>CodeCompanionActions optimize<CR>", desc = "Optimize Code", mode = "v" },
+      { "<leader>ad", "<cmd>CodeCompanionActions docs<CR>", desc = "Add Documentation", mode = "v" },
+      { "<leader>at", "<cmd>CodeCompanionActions tests<CR>", desc = "Generate Tests", mode = "v" },
+      { "<leader>ac", "<cmd>CodeCompanionActions commit<CR>", desc = "Generate Commit Message" },
+    },
     config = function(_, opts)
       require("codecompanion").setup(opts)
 
@@ -151,11 +151,11 @@ return {
           vim.opt_local.number = false
           -- Fix window width to prevent resize events from changing it
           vim.wo.winfixwidth = true
-          
+
           -- Enable render-markdown for codecompanion buffers
           local has_render_markdown, render_markdown = pcall(require, "render-markdown")
           if has_render_markdown then
-            vim.treesitter.language.register('markdown', 'codecompanion')
+            vim.treesitter.language.register("markdown", "codecompanion")
             render_markdown.enable()
           end
           
@@ -184,7 +184,7 @@ return {
         end,
       })
 
-        --[[
+      --[[
         -- Prevent CodeCompanion from opening files in the chat window itself
         -- Redirect file buffers to existing non-chat windows
         vim.api.nvim_create_autocmd("BufWinEnter", {
@@ -239,90 +239,91 @@ return {
             end
           end,
         })
-        ]]--
+        ]]
+      --
 
-        -- Force normal mode when leaving codecompanion chat for a file buffer (even if not redirected)
-        -- Also handle window focus changes (for splits)
-        vim.api.nvim_create_autocmd("WinEnter", {
-          pattern = "*",
-          callback = function()
-            local cur_win = vim.api.nvim_get_current_win()
-            local cur_buf = vim.api.nvim_win_get_buf(cur_win)
-            local cur_ft = vim.bo[cur_buf].filetype
-            -- Find the previously focused window (if any)
-            local prev_win = vim.fn.win_getid(vim.fn.winnr('#'))
-            if prev_win and vim.api.nvim_win_is_valid(prev_win) then
-              local prev_buf = vim.api.nvim_win_get_buf(prev_win)
-              local prev_ft = vim.bo[prev_buf].filetype
-              if prev_ft == "codecompanion" and cur_ft ~= "codecompanion" then
-                vim.schedule(function()
-                  if vim.api.nvim_get_mode().mode:find('i') then
-                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
-                  end
-                end)
-              end
-            end
-          end,
-        })
-
-        -- (Retain BufEnter for edge cases)
-        vim.api.nvim_create_autocmd("BufEnter", {
-          pattern = "*",
-          callback = function()
-            local prev_buf = vim.fn.bufnr('#')
-            if prev_buf > 0 and vim.bo[prev_buf].filetype == "codecompanion" and vim.bo.filetype ~= "codecompanion" then
+      -- Force normal mode when leaving codecompanion chat for a file buffer (even if not redirected)
+      -- Also handle window focus changes (for splits)
+      vim.api.nvim_create_autocmd("WinEnter", {
+        pattern = "*",
+        callback = function()
+          local cur_win = vim.api.nvim_get_current_win()
+          local cur_buf = vim.api.nvim_win_get_buf(cur_win)
+          local cur_ft = vim.bo[cur_buf].filetype
+          -- Find the previously focused window (if any)
+          local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
+          if prev_win and vim.api.nvim_win_is_valid(prev_win) then
+            local prev_buf = vim.api.nvim_win_get_buf(prev_win)
+            local prev_ft = vim.bo[prev_buf].filetype
+            if prev_ft == "codecompanion" and cur_ft ~= "codecompanion" then
               vim.schedule(function()
-                if vim.api.nvim_get_mode().mode:find('i') then
-                  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
+                if vim.api.nvim_get_mode().mode:find("i") then
+                  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
                 end
               end)
             end
-          end,
-        })
-      end,
+          end
+        end,
+      })
+
+      -- (Retain BufEnter for edge cases)
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "*",
+        callback = function()
+          local prev_buf = vim.fn.bufnr("#")
+          if prev_buf > 0 and vim.bo[prev_buf].filetype == "codecompanion" and vim.bo.filetype ~= "codecompanion" then
+            vim.schedule(function()
+              if vim.api.nvim_get_mode().mode:find("i") then
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+              end
+            end)
+          end
+        end,
+      })
+    end,
   },
 
-    -- mcphub.nvim: Optional, for advanced multi-provider orchestration
-    -- {
-    --   "ravitemer/mcphub.nvim",
-    --   dependencies = { "olimorris/codecompanion.nvim" },
-    --   build = "npm install -g mcp-hub@latest",
-    --   cmd = { "MCPHub" },
-    --   opts = {},
-    -- },
+  -- mcphub.nvim: Optional, for advanced multi-provider orchestration
+  -- {
+  --   "ravitemer/mcphub.nvim",
+  --   dependencies = { "olimorris/codecompanion.nvim" },
+  --   build = "npm install -g mcp-hub@latest",
+  --   cmd = { "MCPHub" },
+  --   opts = {},
+  -- },
 
-    -- CopilotChat.nvim: Optional, alternative chat interface (commented out)
-    -- {
-    --   "CopilotC-Nvim/CopilotChat.nvim",
-    --   dependencies = { { "zbirenbaum/copilot.lua" }, { "nvim-lua/plenary.nvim" } },
-    --   build = "make tiktoken",
-    --   cmd = "CopilotChat",
-    --   opts = function() return {} end,
-    -- },
+  -- CopilotChat.nvim: Optional, alternative chat interface (commented out)
+  -- {
+  --   "CopilotC-Nvim/CopilotChat.nvim",
+  --   dependencies = { { "zbirenbaum/copilot.lua" }, { "nvim-lua/plenary.nvim" } },
+  --   build = "make tiktoken",
+  --   cmd = "CopilotChat",
+  --   opts = function() return {} end,
+  -- },
 
   -- Optional: Copilot in Completion Menu
   -- By default, Copilot uses ghost text. Uncomment ONE below for menu integration:
 
-    -- Completion menu integration (optional, commented out)
-    -- {
-    --   "giuxtaposition/blink-cmp-copilot",
-    --   dependencies = { "zbirenbaum/copilot.lua" },
-    --   opts = {},
-    -- },
-    -- {
-    --   "fang2hou/blink-copilot",
-    --   dependencies = { "zbirenbaum/copilot.lua" },
-    --   opts = {},
-    -- },
+  -- Completion menu integration (optional, commented out)
+  -- {
+  --   "giuxtaposition/blink-cmp-copilot",
+  --   dependencies = { "zbirenbaum/copilot.lua" },
+  --   opts = {},
+  -- },
+  -- {
+  --   "fang2hou/blink-copilot",
+  --   dependencies = { "zbirenbaum/copilot.lua" },
+  --   opts = {},
+  -- },
 
-    -- Codeium: Free Copilot alternative (optional, commented out)
-    -- {
-    --   "Exafunction/codeium.nvim",
-    --   dependencies = { "nvim-lua/plenary.nvim" },
-    --   cmd = "Codeium",
-    --   event = "InsertEnter",
-    --   opts = { enable_chat = true },
-    -- },
+  -- Codeium: Free Copilot alternative (optional, commented out)
+  -- {
+  --   "Exafunction/codeium.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim" },
+  --   cmd = "Codeium",
+  --   event = "InsertEnter",
+  --   opts = { enable_chat = true },
+  -- },
 }
 
 --

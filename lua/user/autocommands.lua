@@ -48,19 +48,11 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Determine if this is quickfix or location list
     local is_loclist = vim.fn.getloclist(0, { filewinid = 1 }).filewinid ~= 0
 
-    -- <CR> - Jump to item and close the list
+    -- <CR> - Jump to item (keep list open)
     vim.keymap.set("n", "<CR>", function()
       local line = vim.fn.line(".")
-      vim.cmd("normal! " .. line .. "G")
-      vim.cmd(".cc") -- Jump to the item
-
-      -- Close the appropriate list
-      if is_loclist then
-        vim.cmd("lclose")
-      else
-        vim.cmd("cclose")
-      end
-    end, { buffer = bufnr, desc = "Jump to item and close" })
+      vim.cmd(line .. "cc")
+    end, { buffer = bufnr, desc = "Jump to item" })
 
     -- 'o' - Open in horizontal split (keeps quickfix open)
     vim.keymap.set("n", "o", function()

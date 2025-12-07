@@ -3,22 +3,30 @@ return {
   event = { "BufReadPost", "BufNewFile" },
   opts = {
     filetypes = {
-      "typescript",
-      "typescriptreact",
-      "javascript",
-      "javascriptreact",
-      "css",
-      "html",
-      "astro",
-      "lua",
+      "*", -- Enable for all filetypes
+      -- But exclude some where it makes no sense:
+      "!lazy",
+      "!mason",
+      "!help",
+      "!checkhealth",
     },
     user_default_options = {
-      names = false,
-      rgb_fn = true,
-      hsl_fn = true,
-      tailwind = "both",
+      names = false, -- Don't highlight color names like "red", "blue" (can be noisy)
+      RGB = true, -- #RGB hex codes
+      RRGGBB = true, -- #RRGGBB hex codes
+      RRGGBBAA = true, -- #RRGGBBAA hex codes
+      rgb_fn = true, -- CSS rgb() and rgba() functions
+      hsl_fn = true, -- CSS hsl() and hsla() functions
+      css = false, -- Don't enable all CSS features (too broad)
+      css_fn = false, -- Don't enable all CSS function formats
+      mode = "background", -- Show color as background
+      tailwind = "both", -- Enable tailwind colors
     },
-    buftypes = {},
+    buftypes = {
+      "*", -- Enable for all buffer types including quickfix
+      "!prompt",
+      "!popup",
+    },
   },
 }
 

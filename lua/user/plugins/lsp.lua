@@ -126,8 +126,78 @@ return {
           vim.diagnostic.jump({ count = -1, float = true })
         end, "Goto Previous Diagnostic")
 
-        -- Show LspInfo
-        map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
+        -- ============================================================================
+        -- Code Actions Menu (<leader>c) - Actions that modify or work with code
+        -- ============================================================================
+
+        -- Symbol rename (duplicate of grn for discoverability)
+        map("<leader>cr", vim.lsp.buf.rename, "[R]ename symbol")
+
+        -- Code actions (duplicate of gra for discoverability)
+        map("<leader>ca", vim.lsp.buf.code_action, "Code [A]ction", { "n", "x" })
+
+        -- Codelens (useful for Go, Java, etc.)
+        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
+          map("<leader>cl", vim.lsp.codelens.run, "Run Code[l]ens")
+        end
+
+        -- Source action (organize imports, etc.)
+        map("<leader>cs", function()
+          vim.lsp.buf.code_action({
+            context = {
+              only = { "source" },
+              diagnostics = {},
+            },
+          })
+        end, "[S]ource Action")
+
+        -- ============================================================================
+        -- LSP Menu (<leader>l) - Navigation, information, and LSP management
+        -- ============================================================================
+
+        -- Document symbols (alternative to gO)
+        map("<leader>lds", function()
+          Snacks.picker.lsp_symbols()
+        end, "[D]ocument [S]ymbols")
+
+        -- Workspace symbols (alternative to gW)
+        map("<leader>lws", function()
+          Snacks.picker.lsp_workspace_symbols()
+        end, "[W]orkspace [S]ymbols")
+
+        -- Hover documentation
+        map("<leader>lh", vim.lsp.buf.hover, "[H]over Documentation")
+
+        -- Signature help
+        map("<leader>lk", vim.lsp.buf.signature_help, "Signature Help (like [K])")
+
+        -- Call hierarchy
+        if
+          client
+          and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_prepareCallHierarchy, event.buf)
+        then
+          map("<leader>lci", vim.lsp.buf.incoming_calls, "[C]alls [I]ncoming")
+          map("<leader>lco", vim.lsp.buf.outgoing_calls, "[C]alls [O]utgoing")
+        end
+
+        -- LSP server management
+        map("<leader>li", "<cmd>LspInfo<CR>", "LSP [I]nfo")
+        map("<leader>lr", "<cmd>LspRestart<CR>", "LSP [R]estart")
+        map("<leader>ll", "<cmd>LspLog<CR>", "LSP [L]og")
+
+        -- Workspace folder management
+        map("<leader>lwa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
+        map("<leader>lwr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
+        map("<leader>lwl", function()
+          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, "[W]orkspace [L]ist Folders")
+
+        -- ============================================================================
+        -- Existing diagnostic mappings (kept in <leader>c for "code problems")
+        -- ============================================================================
+
+        -- Show LspInfo (moved to <leader>li above, keeping this for backwards compatibility)
+        -- map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
 
         -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
         ---@param client vim.lsp.Client
@@ -148,7 +218,9 @@ return {
         --
         -- When you move your cursor, the highlights will be cleared (the second autocommand).
         local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
+        if
+          client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
+        then
           local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
           vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
             buffer = event.buf,
