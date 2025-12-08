@@ -273,7 +273,7 @@ keymap("n", "<S-h>", "<cmd>bprevious<CR>", opts)
 -- keymap("n", "<S-q>", "<cmd>bdelete<CR>", opts)
 
 -- Quick switch to alternate buffer (like Alt+Tab for files)
-keymap("n", "<C-tab>", "<C-6>", opts)
+keymap("n", "<leader><tab>", "<C-6>", { desc = "Alternate buffer" })
 
 -- ============================================================================
 -- Quickfix & Location List Toggle
