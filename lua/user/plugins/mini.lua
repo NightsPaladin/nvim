@@ -22,30 +22,7 @@ return {
     require("mini.comment").setup({})
 
     -- Auto-pair brackets, quotes, etc.
-    require("mini.pairs").setup({
-      mappings = {
-        ['"'] = {
-          action = "closeopen",
-          pair = '""',
-          neigh_pattern = "[^%w\\][^%w]",
-          register = { cr = false },
-        },
-        ["`"] = {
-          action = "closeopen",
-          pair = "``",
-          neigh_pattern = "[^%w\\][^%w]",
-          register = { cr = false },
-        },
-        -- Single quote already has left-side word detection,
-        -- but you could make it bidirectional:
-        ["'"] = {
-          action = "closeopen",
-          pair = "''",
-          neigh_pattern = "[^%w\\][^%w]",
-          register = { cr = false },
-        },
-      },
-    })
+    require("mini.pairs").setup({})
 
     -- Disable mini.pairs in markdown and codecompanion buffers
     vim.api.nvim_create_autocmd("FileType", {
@@ -70,6 +47,17 @@ return {
         update_n_lines = "gsn",
         suffix_last = "l",
         suffix_next = "n",
+      },
+      custom_surroundings = {
+        ['('] = { output = { left = '(', right = ')' } },
+        ['{'] = { output = { left = '{', right = '}' } },
+        ['['] = { output = { left = '[', right = ']' } },
+        ['<'] = { output = { left = '<', right = '>' } },
+        [')'] = { output = { left = '(', right = ')' } },
+        ['}'] = { output = { left = '{', right = '}' } },
+        [']'] = { output = { left = '[', right = ']' } },
+        ['>'] = { output = { left = '<', right = '>' } },
+        -- add more as needed
       },
     })
 
