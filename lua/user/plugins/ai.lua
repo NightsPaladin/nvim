@@ -73,7 +73,7 @@ return {
         },
       },
       -- Default: Copilot (uses your GitHub Copilot subscription, no API keys required)
-      strategies = {
+      interactions = {
         chat = {
           adapter = "copilot",
           slash_commands = {
