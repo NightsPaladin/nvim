@@ -12,30 +12,22 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = vim.api.nvim_create_augroup("format-options", { clear = true }),
   callback = function()
-    vim.cmd("set formatoptions-=cro")
-    vim.cmd("set formatoptions+=j")
+    vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+    vim.opt_local.formatoptions:append("j")
   end,
 })
 
 -- quit these types of buffers with 'q'
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = {
-    "netrw",
-    "Jaq",
-    "git",
-    "help",
-    "man",
-    "lspinfo",
-    "oil",
-    "spectre_panel",
-    "lir",
-    "DressingSelect",
-    "tsplayground",
     "checkhealth",
-    "qf",
-    "",
+    "help",
+    "lspinfo",
+    "man",
+    "notify",
   },
   callback = function()
     vim.cmd([[
@@ -44,8 +36,6 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     ]])
   end,
 })
-
-local opts = { noremap = true, silent = true }
 
 -- ============================================================================
 -- Auto-close Quickfix after selection
@@ -58,19 +48,11 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Determine if this is quickfix or location list
     local is_loclist = vim.fn.getloclist(0, { filewinid = 1 }).filewinid ~= 0
 
-    -- <CR> - Jump to item and close the list
+    -- <CR> - Jump to item (keep list open)
     vim.keymap.set("n", "<CR>", function()
       local line = vim.fn.line(".")
-      vim.cmd("normal! " .. line .. "G")
-      vim.cmd(".cc") -- Jump to the item
-
-      -- Close the appropriate list
-      if is_loclist then
-        vim.cmd("lclose")
-      else
-        vim.cmd("cclose")
-      end
-    end, { buffer = bufnr, desc = "Jump to item and close" })
+      vim.cmd(line .. "cc")
+    end, { buffer = bufnr, desc = "Jump to item" })
 
     -- 'o' - Open in horizontal split (keeps quickfix open)
     vim.keymap.set("n", "o", function()
@@ -132,9 +114,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
       -- Set width to exactly 80 (since we disabled line numbers and signs)
       vim.api.nvim_win_set_width(winid, 80)
-
-      -- Optional: Set a minimum width so it doesn't get squished
-      vim.api.nvim_win_set_width(winid, 80)
+      vim.wo[winid].winfixwidth = true -- Prevent accidental resize
     end)
   end,
 })
@@ -167,17 +147,5 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = "FileTypeConfig",
 })
 
--- Highlight the border of the active window
-vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
-  callback = function()
-    vim.opt_local.winhighlight = "Normal:Normal,NormalNC:NormalNC"
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
-  callback = function()
-    vim.opt_local.winhighlight = "Normal:NormalNC,NormalNC:NormalNC"
-  end,
-})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

@@ -22,7 +22,8 @@ spec("user.plugins.schemastore")        -- JSON/YAML schemas (dependency for LSP
 spec("user.plugins.lsp")                -- Language Server Protocol setup
 spec("user.plugins.cmp")                -- Completion engine
 spec("user.plugins.treesitter")         -- Syntax highlighting and parsing
-spec("user.plugins.markview")           -- Inline Markdown rendering
+-- spec("user.plugins.markview")           -- Inline Markdown rendering (disabled; replaced by render-markdown.nvim)
+spec("user.plugins.render-markdown")    -- Inline Markdown rendering (using render-markdown.nvim)
 
 -- ============================================================================
 -- Editor Enhancements (General productivity plugins)

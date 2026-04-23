@@ -33,6 +33,31 @@ return { -- Autocompletion
         vim.defer_fn(function()
           require("snippets.emoji")
         end, 100)
+
+        -- Load personal markdown snippets
+        vim.defer_fn(function()
+          require("snippets.mysnippets")
+        end, 100)
+
+        -- LuaSnip choice node navigation (<C-n>/<C-p>)
+        local ok, ls = pcall(require, "luasnip")
+        if ok then
+          -- Make CodeCompanion buffers use markdown snippets
+          pcall(function()
+            ls.filetype_extend("codecompanion", { "markdown" })
+          end)
+          local map = vim.keymap.set
+          map({ "i", "s" }, "<C-n>", function()
+            if ls.choice_active() then
+              ls.change_choice(1)
+            end
+          end, { desc = "LuaSnip choice next" })
+          map({ "i", "s" }, "<C-p>", function()
+            if ls.choice_active() then
+              ls.change_choice(-1)
+            end
+          end, { desc = "LuaSnip choice prev" })
+        end
       end,
     },
     "folke/lazydev.nvim",
@@ -64,16 +89,15 @@ return { -- Autocompletion
       -- See :h blink-cmp-config-keymap for defining your own keymap
       preset = "default",
 
-      ["<C-h>"] = { "snippet_forward", "fallback" },
-      ["<C-l>"] = { "snippet_backward", "fallback" },
+      ["<S-Tab>"] = { "snippet_backward", "select_prev", "fallback" },
+      ["<Tab>"] = { "snippet_forward", "select_next", "fallback" },
       ["<C-k>"] = { "select_prev", "fallback" },
       ["<C-j>"] = { "select_next", "fallback" },
-      ["<C-p>"] = { "select_prev", "fallback" },
-      ["<C-n>"] = { "select_next", "fallback" },
-      ["<S-Tab>"] = { "select_prev", "fallback" },
-      ["<Tab>"] = { "select_next", "fallback" },
+      -- Both <CR> and <C-y> accept completion
+      -- <CR> is familiar from most editors, <C-y> is Vim's traditional accept key
       ["<CR>"] = { "accept", "fallback" },
       ["<C-y>"] = { "accept", "fallback" },
+
       ["<S-k>"] = { "scroll_documentation_up", "fallback" },
       ["<S-j>"] = { "scroll_documentation_down", "fallback" },
       ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },

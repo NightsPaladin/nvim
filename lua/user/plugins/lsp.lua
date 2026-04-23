@@ -122,13 +122,82 @@ return {
         map("<leader>cj", function()
           vim.diagnostic.jump({ count = 1, float = true })
         end, "Goto Next Diagnostic")
-
         map("<leader>ck", function()
           vim.diagnostic.jump({ count = -1, float = true })
         end, "Goto Previous Diagnostic")
 
-        -- Show LspInfo
-        map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
+        -- ============================================================================
+        -- Code Actions Menu (<leader>c) - Actions that modify or work with code
+        -- ============================================================================
+
+        -- Symbol rename (duplicate of grn for discoverability)
+        map("<leader>cr", vim.lsp.buf.rename, "[R]ename symbol")
+
+        -- Code actions (duplicate of gra for discoverability)
+        map("<leader>ca", vim.lsp.buf.code_action, "Code [A]ction", { "n", "x" })
+
+        -- Codelens (useful for Go, Java, etc.)
+        if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
+          map("<leader>cl", vim.lsp.codelens.run, "Run Code[l]ens")
+        end
+
+        -- Source action (organize imports, etc.)
+        map("<leader>cs", function()
+          vim.lsp.buf.code_action({
+            context = {
+              only = { "source" },
+              diagnostics = {},
+            },
+          })
+        end, "[S]ource Action")
+
+        -- ============================================================================
+        -- LSP Menu (<leader>l) - Navigation, information, and LSP management
+        -- ============================================================================
+
+        -- Document symbols (alternative to gO)
+        map("<leader>lds", function()
+          Snacks.picker.lsp_symbols()
+        end, "[D]ocument [S]ymbols")
+
+        -- Workspace symbols (alternative to gW)
+        map("<leader>lws", function()
+          Snacks.picker.lsp_workspace_symbols()
+        end, "[W]orkspace [S]ymbols")
+
+        -- Hover documentation
+        map("<leader>lh", vim.lsp.buf.hover, "[H]over Documentation")
+
+        -- Signature help
+        map("<leader>lk", vim.lsp.buf.signature_help, "Signature Help (like [K])")
+
+        -- Call hierarchy
+        if
+          client
+          and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_prepareCallHierarchy, event.buf)
+        then
+          map("<leader>lci", vim.lsp.buf.incoming_calls, "[C]alls [I]ncoming")
+          map("<leader>lco", vim.lsp.buf.outgoing_calls, "[C]alls [O]utgoing")
+        end
+
+        -- LSP server management
+        map("<leader>li", "<cmd>LspInfo<CR>", "LSP [I]nfo")
+        map("<leader>lr", "<cmd>LspRestart<CR>", "LSP [R]estart")
+        map("<leader>ll", "<cmd>LspLog<CR>", "LSP [L]og")
+
+        -- Workspace folder management
+        map("<leader>lwa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
+        map("<leader>lwr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
+        map("<leader>lwl", function()
+          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, "[W]orkspace [L]ist Folders")
+
+        -- ============================================================================
+        -- Existing diagnostic mappings (kept in <leader>c for "code problems")
+        -- ============================================================================
+
+        -- Show LspInfo (moved to <leader>li above, keeping this for backwards compatibility)
+        -- map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
 
         -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
         ---@param client vim.lsp.Client
@@ -158,13 +227,11 @@ return {
             group = highlight_augroup,
             callback = vim.lsp.buf.document_highlight,
           })
-
           vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
             buffer = event.buf,
             group = highlight_augroup,
             callback = vim.lsp.buf.clear_references,
           })
-
           vim.api.nvim_create_autocmd("LspDetach", {
             group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
             callback = function(event2)
@@ -354,6 +421,64 @@ return {
           },
         },
       },
+
+      -- NEW: Bash/Shell LSP
+      bashls = {
+        filetypes = { "sh", "bash", "zsh" },
+      },
+
+      -- NEW: Docker LSP
+      dockerls = {},
+
+      -- NEW: Docker Compose LSP
+      docker_compose_language_service = {},
+
+      -- NEW: Terraform LSP (if you use Terraform)
+      terraformls = {},
+
+      -- NEW: TypeScript/JavaScript LSP (for web dev)
+      ts_ls = {
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            },
+          },
+          javascript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            },
+          },
+        },
+      },
+
+      -- NEW: HTML LSP (for web dev)
+      html = {},
+
+      -- NEW: CSS LSP (for web dev)
+      cssls = {},
+
+      -- NEW: ESLint LSP (for JS/TS linting)
+      eslint = {
+        settings = {
+          workingDirectories = { mode = "auto" },
+        },
+      },
+
+      -- NEW: Helm LSP (already in your tools, adding config)
+      helm_ls = {},
     }
 
     -- Ensure the servers and tools above are installed
@@ -378,22 +503,37 @@ return {
       "impl",
       "delve",
 
-      -- Python formatters/tools (pyright comes from servers table automatically)
+      -- Python tools
       "black",
       "isort",
       "debugpy",
-      "ruff", -- Optional but recommended
+      "ruff",
 
-      "stylua", -- Used to format Lua code
+      -- Lua tools
+      "stylua",
+
+      -- Shell/Bash tools
       "shellcheck",
       "shfmt",
+
+      -- YAML/Kubernetes tools
       "ansible-lint",
       "kube-linter",
       "yamllint",
       "yamlfmt",
-      "helm-ls",
+
+      -- Terraform tools (if you use it)
       "hclfmt",
+      "tflint",
+
+      -- Docker tools
+      "hadolint", -- NEW: Dockerfile linter
+
+      -- Web dev tools
+      "prettier", -- NEW: Universal formatter for JS/TS/HTML/CSS/JSON
+      "js-debug-adapter", -- NEW: JavaScript/TypeScript debugger
     })
+
     require("mason-tool-installer").setup({
       ensure_installed = ensure_installed,
       auto_update = false,
