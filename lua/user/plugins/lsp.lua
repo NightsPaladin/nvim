@@ -16,6 +16,9 @@ return {
     "saghen/blink.cmp",
   },
   config = function()
+    -- Keep LSP logging quiet by default; raise it manually when debugging.
+    vim.lsp.log.set_level("off")
+
     -- Brief aside: **What is LSP?**
     --
     -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -58,8 +61,21 @@ return {
           vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
         end
 
-        -- Set vim lsp log to "off" normally and turn it up when needed for debugging
-        vim.lsp.set_log_level("off")
+        -- Retrieve the LSP client that attached to this buffer
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+        -- Resolves client:supports_method() API (colon syntax introduced in Neovim 0.11)
+        ---@param client vim.lsp.Client
+        ---@param method vim.lsp.protocol.Method
+        ---@param bufnr? integer
+        ---@return boolean
+        local function client_supports_method(client, method, bufnr)
+          if vim.fn.has("nvim-0.11") == 1 then
+            return client:supports_method(method, bufnr)
+          else
+            return client.supports_method(method, { bufnr = bufnr })
+          end
+        end
 
         -- Rename the variable under your cursor.
         --  Most Language Servers support renaming across files, etc.
@@ -199,25 +215,11 @@ return {
         -- Show LspInfo (moved to <leader>li above, keeping this for backwards compatibility)
         -- map("<leader>ci", "<cmd>LspInfo<CR>", "LSP [I]nfo")
 
-        -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
-        ---@param client vim.lsp.Client
-        ---@param method vim.lsp.protocol.Method
-        ---@param bufnr? integer some lsp support methods only in specific files
-        ---@return boolean
-        local function client_supports_method(client, method, bufnr)
-          if vim.fn.has("nvim-0.11") == 1 then
-            return client:supports_method(method, bufnr)
-          else
-            return client.supports_method(method, { bufnr = bufnr })
-          end
-        end
-
         -- The following two autocommands are used to highlight references of the
         -- word under your cursor when your cursor rests there for a little while.
         --    See `:help CursorHold` for information about when this is executed
         --
         -- When you move your cursor, the highlights will be cleared (the second autocommand).
-        local client = vim.lsp.get_client_by_id(event.data.client_id)
         if
           client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
         then
@@ -292,15 +294,12 @@ return {
       -- },
     })
 
-    -- LSP servers and clients are able to communicate to each other what features they support.
-    --  By default, Neovim doesn't support everything that is in the LSP specification.
-    --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-    --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
     local capabilities = require("blink.cmp").get_lsp_capabilities()
+    -- Apply capabilities globally so all servers inherit them without repetition
+    vim.lsp.config("*", { capabilities = capabilities })
 
-    -- Enable the following language servers
-    --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-    --
+    -- Per-server configuration via vim.lsp.config() (Neovim 0.11+ native API).
+    -- mason-lspconfig will call vim.lsp.enable() for each installed server automatically.
     --  Add any additional override configuration in the following tables. Available keys are:
     --  - cmd (table): Override the default command used to start the server
     --  - filetypes (table): Override the default list of associated filetypes for the server
@@ -540,19 +539,17 @@ return {
       run_on_start = true,
     })
 
+    -- Apply per-server configs via the native vim.lsp.config() API before mason enables them
+    for server_name, server_opts in pairs(servers) do
+      if next(server_opts) ~= nil then
+        vim.lsp.config(server_name, server_opts)
+      end
+    end
+
+    -- mason-lspconfig v2: handlers and automatic_installation options were removed.
+    -- It now auto-calls vim.lsp.enable() for every installed server (automatic_enable = true by default).
     require("mason-lspconfig").setup({
-      ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-      automatic_installation = false,
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-          -- This handles overriding only values explicitly passed
-          -- by the server configuration above. Useful when disabling
-          -- certain features of an LSP (for example, turning off formatting for ts_ls)
-          server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-          require("lspconfig")[server_name].setup(server)
-        end,
-      },
+      ensure_installed = {}, -- installs are managed by mason-tool-installer above
     })
   end,
 }
