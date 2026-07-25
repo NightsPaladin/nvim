@@ -269,6 +269,12 @@ end, { desc = "Resize window width to 90%" })
 keymap("n", "<S-l>", "<cmd>bnext<CR>", opts)
 keymap("n", "<S-h>", "<cmd>bprevious<CR>", opts)
 
+-- Shift+h/l above took over vanilla H/L (top/bottom of window), so restore that
+-- on Alt/Option+h/l instead. `normal!` bypasses the S-h/S-l remap above, reaching
+-- Vim's original H/L behavior.
+keymap("n", "<M-h>", "<cmd>normal! H<CR>", { desc = "Move to top of window" })
+keymap("n", "<M-l>", "<cmd>normal! L<CR>", { desc = "Move to bottom of window" })
+
 -- Close current buffer with Shift+q
 -- keymap("n", "<S-q>", "<cmd>bdelete<CR>", opts)
 
@@ -322,6 +328,13 @@ end, { desc = "[T]oggle [Q]uickfix list" })
 keymap("n", "<leader>tl", function()
   toggle_list("loclist")
 end, { desc = "[T]oggle [L]ocation list" })
+
+-- Jump between entries without needing the list window focused/open
+-- (populate the quickfix list from any Snacks picker with <C-q>)
+keymap("n", "]q", "<cmd>cnext<CR>", { desc = "Next quickfix item" })
+keymap("n", "[q", "<cmd>cprev<CR>", { desc = "Previous quickfix item" })
+keymap("n", "]l", "<cmd>lnext<CR>", { desc = "Next location list item" })
+keymap("n", "[l", "<cmd>lprev<CR>", { desc = "Previous location list item" })
 
 -- ============================================================================
 -- Text Movement & Manipulation
@@ -405,9 +418,6 @@ keymap("n", "<RightMouse>", "<cmd>:popup mousemenu<CR>")
 -- Useful for long lines or Tailwind classes
 -- keymap({ "n", "x" }, "j", "gj", opts)
 -- keymap({ "n", "x" }, "k", "gk", opts)
-
--- Toggle soft wrap on/off
--- keymap("n", "<leader>w", ":lua vim.wo.wrap = not vim.wo.wrap<CR>", opts)
 
 -- ============================================================================
 -- Organization Notes

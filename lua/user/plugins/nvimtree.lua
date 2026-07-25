@@ -71,12 +71,9 @@ return {
       vim.keymap.set("n", "<2-RightMouse>", api.tree.change_root_to_node, opts("CD"))
       -- END_DEFAULT_ON_ATTACH
 
-      -- Mappings migrated from view.mappings.list
-      --
-      -- You will need to insert "your code goes here" for any mappings with a custom action_cb
+      -- Vim-style h/l/v navigation added on top of the defaults above
+      -- (<CR>/o are already bound to open.edit in BEGIN_DEFAULT_ON_ATTACH)
       vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
-      vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open"))
-      vim.keymap.set("n", "o", api.node.open.edit, opts("Open"))
       vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
       vim.keymap.set("n", "v", api.node.open.vertical, opts("Open: Vertical Split"))
     end
