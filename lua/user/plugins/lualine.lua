@@ -14,6 +14,15 @@ return {
 
     local diff = {
       "diff",
+      -- mini.diff (not gitsigns, which was removed as redundant) owns hunk tracking now;
+      -- read its buffer-local summary instead of relying on gitsigns_status_dict
+      source = function()
+        local summary = vim.b.minidiff_summary
+        if summary == nil then
+          return nil
+        end
+        return { added = summary.add, modified = summary.change, removed = summary.delete }
+      end,
       colored = false,
       symbols = { added = " ", modified = " ", removed = " " }, -- changes diff symbols
       cond = hide_in_width,

@@ -22,14 +22,13 @@ spec("user.plugins.schemastore")        -- JSON/YAML schemas (dependency for LSP
 spec("user.plugins.lsp")                -- Language Server Protocol setup
 spec("user.plugins.cmp")                -- Completion engine
 spec("user.plugins.treesitter")         -- Syntax highlighting and parsing
--- spec("user.plugins.markview")           -- Inline Markdown rendering (disabled; replaced by render-markdown.nvim)
 spec("user.plugins.render-markdown")    -- Inline Markdown rendering (using render-markdown.nvim)
 
 -- ============================================================================
 -- Editor Enhancements (General productivity plugins)
 -- ============================================================================
-spec("user.plugins.mini")               -- Multi-tool: surround, pairs, comment, etc.
-spec("user.plugins.snacks")             -- Terminal, lazygit, pickers, notifications, toggles
+spec("user.plugins.mini")               -- Multi-tool: surround, pairs, comment, git diff signs/hunks, etc.
+spec("user.plugins.snacks")             -- Terminal, lazygit, pickers, notifications, toggles, git blame/status
 spec("user.plugins.telescope")          -- Minimal config (dependency for telekasten)
 spec("user.plugins.whichkey")           -- Keybinding hints
 spec("user.plugins.nvimtree")           -- File explorer
@@ -43,11 +42,6 @@ spec("user.plugins.colorizer")          -- Highlight color codes
 spec("user.plugins.todocomments")       -- Highlight TODO/FIXME in comments
 
 -- ============================================================================
--- Git Integration
--- ============================================================================
-spec("user.plugins.gitsigns")           -- Git status in gutter, hunk navigation
-
--- ============================================================================
 -- Debugging
 -- ============================================================================
 spec("user.plugins.dap")                -- Debug Adapter Protocol support
@@ -55,7 +49,7 @@ spec("user.plugins.dap")                -- Debug Adapter Protocol support
 -- ============================================================================
 -- AI & Copilot
 -- ============================================================================
-spec("user.plugins.ai")                 -- GitHub Copilot & CopilotChat
+-- spec("user.plugins.ai")                 -- GitHub Copilot & CopilotChat
 -- require("user.plugins.copilot-telescope") -- Multi-file CopilotChat (disabled)
 
 -- ============================================================================
@@ -64,15 +58,6 @@ spec("user.plugins.ai")                 -- GitHub Copilot & CopilotChat
 spec("user.plugins.telekasten")         -- Personal wiki/note-taking
 spec("user.plugins.sops")               -- Encrypted secrets management
 -- NOTE: Project management is loaded in snacks.lua after VeryLazy event
-
--- ============================================================================
--- Disabled Plugins (Superseded by other solutions)
--- ============================================================================
--- spec("user.plugins.bufferline")       -- Replaced by lualine
--- spec("user.plugins.gitlinker")        -- Replaced by snacks.nvim gitbrowse
--- spec("user.plugins.indentline")       -- Replaced by mini.indentscope
--- spec("user.plugins.nvimsurround")     -- Replaced by mini.surround
--- spec("user.plugins.toggleterm")       -- Replaced by snacks.nvim terminal/lazygit
 
 -- ============================================================================
 -- Plugin Manager Initialization (Must Be Last)
